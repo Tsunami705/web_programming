@@ -13,23 +13,55 @@
 <body>
     <div.body>
         <!--body of the welcome page-->
-        <img src="wimage.png" alt="logo">
-        <div class="login">
-            <label for="">Email </label>
-            <input type="email" required>
+        <img src="wimage.png" alt="logo" id="logo">
+        <!-- <div id="signin" class="login"> -->
+        <div class="sign" id="sign">
+            <form action="" id="signin">
+                <label for="">Email </label>
+                <input type="email" required>
+                <br>
+                <label for="">Password </label>
+                <input type="password">
+                <br>
+                <button type="submit" class="signin">login</button>
+            </form>
+
+        <!-- </div> -->
+        <!-- <div id="signup" class="signup"> -->
             <br>
-            <label for="">Password </label>
-            <input type="password">
-            <br>
-            <button>login</button>
-        </div>
-        <div class="signup">
-            <h1>Sign up here</h1>
-            <br>
-            <label for="">First name</label>
-            <input type="text">
-            <label for="">First name</label>
-            <input type="text">
+            <form action="" id="signup">
+                <h1>Sign up here</h1>
+                <label for="">First name</label>
+                <input type="text">
+                <br>
+                <label for="">Family name</label>
+                <input type="text">
+                <br>
+                <label for="gender">Gender</label>
+                <select name="gender" id="gender">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                    <option value="non">Prefer not to say</option>
+                </select>
+                <br>
+                <label for="city">City</label>
+                <input type="text">
+                <br>
+                <label for="country">Country</label>
+                <input type="text">
+                <br>
+                <label for="">Email</label>
+                <input type="email">
+                <br>
+                <label for="">Password</label>
+                <input type="text">
+                <br>
+                <label for="">Repeat PSW</label>
+                <input type="text">
+                <br>
+                <button type="submit" class="signup">signup</button>
+            </form>
             
         </div>
     </div.body>

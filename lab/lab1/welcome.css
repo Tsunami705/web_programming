@@ -1,0 +1,68 @@
+*{
+    /* margin-top: 100px; */
+    padding: 0;
+    font-size: 0.5rem;
+}
+
+body{
+    background-color: aquamarine;
+}
+
+body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+#logo{
+    margin-top: 100px;
+    float: left;
+    border: 2px solid black;
+    /* height: 70%; */
+    /* margin: 1rem 0rem; */
+    height: 60vh;
+    width: 340px;
+    height: 400px;
+}
+
+#sign{
+    margin-top: 100px;
+    float: right;
+    /* border: 2px solid black; */
+    height: 400px;
+    width: 340px;
+    margin-left: 10px;
+    /* background-color: aliceblue; */
+}
+
+#signup{
+    margin-top: 0;
+    border: 2px solid black;
+    /* height: 42vh; */
+    width: 250px;
+    margin-bottom: auto;
+    background-color: aliceblue;
+    overflow: auto;
+}
+
+#signin{
+    border: 2px solid black;
+    /* height: 14.5vh; */
+    width: 250px;
+    background-color: aliceblue;
+    overflow: auto;
+}
+
+button{
+    float:right;
+}
+
+h1{
+    font-size: 1rem;
+}
+
+input.submit{
+    float:right;
+}
