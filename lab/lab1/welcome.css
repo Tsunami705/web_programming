@@ -45,14 +45,17 @@ body{
     margin-bottom: auto;
     background-color: aliceblue;
     overflow: auto;
+    height: 287px;
 }
 
 #signin{
     border: 2px solid black;
     /* height: 14.5vh; */
     width: 250px;
+    height: 100px;
     background-color: aliceblue;
     overflow: auto;
+    margin-bottom: 10px;
 }
 
 button{
@@ -60,7 +63,8 @@ button{
 }
 
 h1{
-    font-size: 1rem;
+    font-size: 2rem;
+    text-align: center;
 }
 
 input.submit{
