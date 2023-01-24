@@ -8,7 +8,7 @@ body{
     background: linear-gradient(90deg, rgb(84, 130, 255), rgb(178, 126, 209));
 }
 
-body{
+#welcomepage{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -83,6 +83,7 @@ button:active{
 h1{
     font-size: 2rem;
     text-align: center;
+    color: rgb(154, 95, 213);
 }
 
 .block{
