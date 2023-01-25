@@ -132,13 +132,27 @@ header.tabcard nav ul {
   display: flex;
   list-style-type: none;
   justify-content: space-around;
+  margin: 0;
 }
 header.tabcard nav ul li {
-  padding: 2rem;
+  padding: 3rem 3rem;
   font-size: 2rem;
   color: rgb(144, 111, 227);
+  cursor: pointer;
 }
 
 header.tabcard nav ul li:hover {
   background-color: rgb(201, 196, 245);
+}
+
+section.homepage {
+  display: block;
+}
+
+section.browsepage {
+  display: none;
+}
+
+section.accountpage {
+  display: none;
 }/*# sourceMappingURL=client.css.map */
