@@ -216,6 +216,7 @@ function confirm_change_psw(repsw){
 var i=1;
 try{
     changepswButton.addEventListener("click",()=>{
+        let Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
         let changepswView=document.querySelector("div.change");
         if(i%2==1){
             changepswView.style.display="block";
@@ -225,7 +226,9 @@ try{
                 let oldpsw=changepswform[0];
                 let newpsw=changepswform[1];
                 let newpswconfirm=changepswform[2];
-                if(serverstub.changePassword(Token,oldpsw.value,newpsw.value).success){
+                let changepswfun=serverstub.changePassword(Token,oldpsw.value,newpsw.value);
+                let wwww=changepswfun.success
+                if(wwww){
                     alert("Password changed.Now you should log in again.");
                     serverstub.signOut(Token);
                     location.reload();
@@ -233,8 +236,6 @@ try{
                     alert("Wrong password.");
                 }
             })
-
-
         }else{
             changepswView.style.display="none";
             i++;
