@@ -90,11 +90,17 @@ try{
             password:signin[1].value
         };
         let signinData=serverstub.signIn(loginData.username,loginData.password);
-
         //session storage
-        sessionStorage.setItem(JSON.stringify(loginData.username),signinData.data);
+        // sessionStorage.setItem(JSON.stringify(loginData.username),signinData.data);
         alert(signinData.message);
-        location.reload();
+        if(signinData.success){
+            setTimeout(()=>{
+                location.reload();
+          },500);
+        }else{
+            null;
+        }
+
     });
 }catch(error){
     console.log(error);
