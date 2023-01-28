@@ -1,7 +1,9 @@
 //Step 5:skip to the right page
-
 let loggedinusers=localStorage.getItem("loggedinusers");
-if(loggedinusers==null){
+// console.log(Object.keys(loggedinusers).length);
+// console.log(JSON.stringify(loggedinusers));
+
+if((loggedinusers==null)||(Object.keys(loggedinusers).length===2)){
     let pageload=document.querySelector("#welcomeview");
     let body=document.querySelector("body");
     body.innerHTML=pageload.innerHTML;
@@ -16,7 +18,14 @@ if(loggedinusers==null){
     // welcome_information.innerHTML="Welcome, "+Object.values(JSON.parse(loggedinusers))[0];
     // newdiv1.appendChild(welcome_information);
     // body.appendChild(newdiv1);
-    null;
+    let homePage=document.querySelector("section.homepage");
+    let browsePage=document.querySelector("section.browsepage");
+    let accountPage=document.querySelector("section.accountpage");
+
+    browsePage.style.display="none";
+    accountPage.style.display="none";
+    homePage.style.display="block";
+    sessionStorage.setItem("tabLiNum","home");
 }
 
 // Step 3:Confirm password
@@ -90,6 +99,7 @@ try{
     console.log(error);
 }
 
+let Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
 
 // Step 6:Implementing tabs
 let logoButton=document.querySelector("header h1");
@@ -144,5 +154,84 @@ accountButton.addEventListener("click",()=>{
     sessionStorage.setItem("tabLiNum","account");
 });
 
+
+// Step 7
+let changepswButton=document.querySelector("div.changepsw");
+try{
+    window.addEventListener("load",()=>{
+        // Step 7:display your account information
+        // let Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
+        let userdata=serverstub.getUserDataByToken(Token).data;
+        console.log(userdata);
+        //email
+        let usernameinfo=document.querySelectorAll("div.infobox div.usernameinfo")[1];
+        usernameinfo.innerHTML=userdata.email;
+        //name
+        let nameinfo=document.querySelectorAll("div.infobox div.nameinfo")[1];
+        nameinfo.innerHTML=userdata.firstname+" "+userdata.familyname;
+        //gender
+        let genderinfo=document.querySelectorAll("div.infobox div.genderinfo")[1];
+        genderinfo.innerHTML=userdata.gender;
+        //city
+        let cityinfo=document.querySelectorAll("div.infobox div.cityinfo")[1];
+        cityinfo.innerHTML=userdata.city;
+        //country
+        let countryinfo=document.querySelectorAll("div.infobox div.countryinfo")[1];
+        countryinfo.innerHTML=userdata.country;
+});
+}catch(e){
+}
+
+// Step 7:Signout
+try{
+    signoutButton=document.querySelector("div.logout");
+    signoutButton.addEventListener("click",()=>{
+        alert(serverstub.signOut(Token).message);
+        // localStorage.removeItem("loggedinusers");
+        location.reload();
+    })
+}catch(e){
+
+}
+
+// Step 7:Change password
+function confirm_change_psw(repsw){
+    let changepswform=document.querySelector("#changeform");
+    let newpsw=changepswform[1];
+    if(newpsw.value!==repsw.value){
+        newpsw.setCustomValidity("Password Must be Match.");
+    }else{
+        newpsw.setCustomValidity(""); 
+    }
+}
+
+var i=1;
+try{
+    changepswButton.addEventListener("click",()=>{
+        let changepswView=document.querySelector("div.change");
+        if(i%2==1){
+            changepswView.style.display="block";
+            i++;
+            let changepswform=document.querySelector("#changeform");
+            changepswform.addEventListener("submit",()=>{
+                let oldpsw=changepswform[0];
+                let newpsw=changepswform[1];
+                let newpswconfirm=changepswform[2];
+                if(serverstub.changePassword(Token,oldpsw.value,newpsw.value).success){
+                    alert("Password changed.Now you should log in again.");
+                    serverstub.signOut(Token);
+                    location.reload();
+                }else{
+                    alert("Wrong password.");
+                }
+            })
+
+
+        }else{
+            changepswView.style.display="none";
+            i++;
+        }
+    })
+}catch(e){}
 
 

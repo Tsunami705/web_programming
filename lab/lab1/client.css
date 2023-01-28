@@ -1,3 +1,13 @@
+::-moz-selection {
+  color: aliceblue;
+  background-color: rgb(125, 62, 187);
+}
+
+::selection {
+  color: aliceblue;
+  background-color: rgb(125, 62, 187);
+}
+
 * {
   /* margin-top: 100px; */
   padding: 0;
@@ -64,7 +74,7 @@ button {
   margin: 10px;
   padding: 7px;
   border: none;
-  border-radius: 20%;
+  border-radius: 5px;
   background-color: rgb(90, 157, 216);
   color: aliceblue;
   cursor: pointer;
@@ -111,6 +121,7 @@ div.logo h1 a {
   font-size: 3rem;
   text-decoration: none;
   color: rgb(154, 95, 213);
+  padding: 3rem;
 }
 
 header.tabcard {
@@ -121,6 +132,7 @@ header.tabcard {
   position: sticky;
   top: 0;
   background-color: aliceblue;
+  min-height: 9vh;
   flex-wrap: wrap;
   z-index: 5;
   transition: all 0.25s ease;
@@ -135,10 +147,12 @@ header.tabcard nav ul {
   margin: 0;
 }
 header.tabcard nav ul li {
-  padding: 3rem 9.1rem;
+  padding: 2rem 4rem;
   font-size: 2rem;
+  border-radius: 50%;
   color: rgb(144, 111, 227);
   cursor: pointer;
+  transition: all 0.25s ease;
 }
 
 header.tabcard nav ul li:hover {
@@ -155,4 +169,91 @@ section.browsepage {
 
 section.accountpage {
   display: none;
+}
+
+section.accountpage div.information {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 20%;
+}
+section.accountpage div.information div.infobox {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  height: 6vh;
+  background-color: rgba(90, 90, 90, 0.2);
+  padding: 2rem;
+  color: rgb(48, 45, 60);
+  border-radius: 10px;
+}
+section.accountpage div.information div.infobox:hover {
+  background-color: rgba(90, 90, 90, 0.3);
+}
+section.accountpage div.infooperation {
+  margin-top: 5vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+section.accountpage div.infooperation div.changepsw {
+  width: 80%;
+  height: 5vh;
+  background-color: aliceblue;
+  padding: 2rem;
+  border-radius: 10px;
+  flex-wrap: wrap;
+  cursor: pointer;
+}
+section.accountpage div.infooperation div.changepsw h3 {
+  text-align: center;
+  color: rgb(48, 45, 60);
+}
+section.accountpage div.infooperation div.changepsw h4 {
+  font-weight: normal;
+  text-align: center;
+  color: rgba(48, 45, 60, 0.7);
+}
+section.accountpage div.infooperation div.logout {
+  margin-top: 2vh;
+  margin-bottom: 5vh;
+  width: 80%;
+  height: 4vh;
+  background-color: aliceblue;
+  padding: 2rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+section.accountpage div.infooperation div.logout h3.signout {
+  color: rgb(180, 15, 15);
+  text-align: center;
+}
+section.accountpage div.infooperation div.change {
+  display: none;
+  margin-top: 2vh;
+  width: 80%;
+  height: 43vh;
+  background-color: aliceblue;
+  padding: 2.5rem;
+  border-radius: 10px;
+  flex-wrap: wrap;
+  overflow: auto;
+}
+section.accountpage div.infooperation div.change form input {
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin: 1.3rem 0rem;
+  width: 95%;
+}
+section.accountpage div.infooperation div.change form div {
+  border: 1px solid rgba(85, 82, 88, 0.1);
+  margin: 2rem 0rem;
+}
+section.accountpage div.infooperation div.change form button {
+  margin-bottom: 2rem;
+  border-radius: 5px;
+}
+section.accountpage h1.information {
+  font-size: 3.2rem;
+  color: rgb(88, 61, 114);
 }/*# sourceMappingURL=client.css.map */

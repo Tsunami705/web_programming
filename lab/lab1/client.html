@@ -116,8 +116,58 @@
     </section>
 
     <section class="accountpage">
-        <h1>This page represent your account page.This block's display property will set to none once you choose other tab</h1>
-        <h1>The default set should be none</h1>
+        <div class="information">
+            <h1 class="information">Account Information</h1>
+            <div class="infobox">
+                <div class="usernameinfo infokey">Email</div>
+                <div class="usernameinfo infovalue"></div>
+            </div>
+            <div class="infobox">
+                <div class="nameinfo infokey">Name</div>
+                <div class="nameinfo infovalue"></div>
+            </div>
+            <div class="infobox">
+                <div class="genderinfo infokey">Gender</div>
+                <div class="genderinfo infovalue"></div>
+            </div>
+            <div class="infobox">
+                <div class="cityinfo infokey">City</div>
+                <div class="cityinfo infovalue"></div>
+            </div>
+            <div class="infobox">
+                <div class="countryinfo infokey">Country</div>
+                <div class="countryinfo infovalue"></div>
+            </div>
+
+        </div>
+
+        <div class="infooperation">
+            <div class="changepsw">
+                <h3>Change your password</h3>
+                <h4>Change your password anytime</h4>
+            </div>
+            <div class="change">
+                <form action="" class="changeform" id="changeform" target="iframe">
+                    <input type="password" class="" id="oldpsw" name="oldpsw" 
+                    minlength="8" maxlength="18" 
+                    placeholder="Current password" required>
+                    <div class="hdd"></div>
+                    <input type="password" class="" id="newpsw" name="newpsw" 
+                    minlength="8" maxlength="18" 
+                    placeholder="New password" required>
+                    <input type="password" class="" id="newpswconfirm" name="newpswconfirm" 
+                    minlength="8" maxlength="18" 
+                    placeholder="Confirm new password" 
+                    oninput="confirm_change_psw(this)" required>
+                    <div class="hdd"></div>
+                    <button type="submit" class="changebutton">Submit</button>
+                </form>
+                <iframe id="iframe" name="iframe" style="display: none;"></iframe>
+            </div>
+            <div class="logout">
+                <h3 class="signout">Signout</h3>
+            </div>
+        </div>
 
 
 
