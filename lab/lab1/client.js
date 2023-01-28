@@ -94,6 +94,7 @@ try{
         //session storage
         sessionStorage.setItem(JSON.stringify(loginData.username),signinData.data);
         alert(signinData.message);
+        location.reload();
     });
 }catch(error){
     console.log(error);
@@ -195,6 +196,7 @@ try{
 }
 
 // Step 7:Change password
+
 function confirm_change_psw(repsw){
     let changepswform=document.querySelector("#changeform");
     let newpsw=changepswform[1];
@@ -233,5 +235,4 @@ try{
         }
     })
 }catch(e){}
-
 
