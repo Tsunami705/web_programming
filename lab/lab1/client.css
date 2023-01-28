@@ -187,6 +187,10 @@ section.accountpage div.information div.infobox {
   color: rgb(48, 45, 60);
   border-radius: 10px;
 }
+section.accountpage div.information div.infobox div.infokey {
+  font-size: 1.5rem;
+  color: black;
+}
 section.accountpage div.information div.infobox:hover {
   background-color: rgba(90, 90, 90, 0.3);
 }
@@ -256,4 +260,8 @@ section.accountpage div.infooperation div.change form button {
 section.accountpage h1.information {
   font-size: 3.2rem;
   color: rgb(88, 61, 114);
+}
+
+#qqqqqq {
+  margin-left: 5px;
 }/*# sourceMappingURL=client.css.map */

@@ -190,6 +190,10 @@ section.accountpage{
             padding: 2rem;
             color: rgb(48, 45, 60);
             border-radius: 10px;
+            div.infokey{
+                font-size: 1.5rem;
+                color: black;
+            }
         }
 
         div.infobox:hover{
@@ -267,4 +271,7 @@ section.accountpage{
         font-size: 3.2rem;
         color: rgb(88, 61, 114);
     }
+}
+#qqqqqq{
+    margin-left: 5px;
 }
