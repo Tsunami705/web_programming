@@ -185,6 +185,20 @@ try{
         //country
         let countryinfo=document.querySelectorAll("div.infobox div.countryinfo")[1];
         countryinfo.innerHTML=userdata.country;
+
+
+        //HOMEPAGE        
+        let nameHome=document.querySelectorAll("h1.nameHome")[0];
+        nameHome.innerHTML=userdata.firstname+" "+userdata.familyname;
+
+        let userHome=document.querySelectorAll("h3.userHome")[0];
+        userHome.innerHTML=userdata.email;
+
+        let infoHome=document.querySelectorAll("p.infoHome")[0];
+        infoHome.innerHTML="Hello, I'm from "+userdata.city+" in "+userdata.country;
+
+        let imagesrc = "https://randomuser.me/api/portraits/lego/"+Math.floor(Math.random() * 10) +".jpg";
+        document.getElementById("profileImage").src=imagesrc;
 });
 }catch(e){
 }
@@ -243,3 +257,92 @@ try{
     })
 }catch(e){}
 
+
+
+
+
+/*******************************/
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const postBtn = document.querySelector("#postBtn");
+    const messageText = document.querySelector("#messageText");
+    const email = document.querySelector("#email");
+    let messageWall = document.querySelector("#messageWall");
+    const reloadWallBtn = document.querySelector("#reloadWallBtn");
+    reloadWall();
+  
+    postBtn.addEventListener("click", function() {
+      const message = messageText.value;
+      const recipientEmail = email.value;
+  
+      serverstub.postMessage(Token, message, recipientEmail);
+      messageText.value = "";
+      email.value = "";
+      reloadWall();
+    });
+    
+    reloadWallBtn.addEventListener("click", reloadWall);
+  
+    function reloadWall() {
+        let messages = serverstub.getUserMessagesByToken(Token).data;
+        messageWall.innerHTML = "";
+        
+        messages.forEach(function(message) {
+            
+          const messageDiv = document.createElement("div");
+          messageDiv.classList.add("message");
+
+          const avatarImg = document.createElement("img");
+          avatarImg.src = "https://randomuser.me/api/portraits/lego/"+Math.floor(Math.random() * 10) +".jpg";
+          avatarImg.alt = "User Avatar";
+          messageDiv.appendChild(avatarImg);
+    
+          const messageP = document.createElement("p");
+          messageP.textContent = message.content;
+          messageDiv.appendChild(messageP);
+    
+          messageWall.appendChild(messageDiv);
+        });
+      }
+});
+  /*
+
+document.addEventListener("DOMContentLoaded", function() {
+    const postBtn = document.querySelector("#postBtn");
+    const messageText = document.querySelector("#messageText");
+    const email = document.querySelector("#email");
+    const messageWall = document.querySelector("#messageWall");
+    const reloadWallBtn = document.querySelector("#reloadWallBtn");
+    
+  
+    postBtn.addEventListener("click", function() {
+      const message = messageText.value;
+      const recipientEmail = email.value;
+  
+      serverstub.postMessage(Token, message, recipientEmail);
+      messageText.value = "";
+      email.value = "";
+      reloadWall();
+    });
+
+    reloadWallBtn.addEventListener("click", reloadWall);
+  
+    function reloadWall() {
+        const messages = serverstub.getUserMessagesByToken(Token);
+        messageWall.innerHTML = "";
+        
+        messages.data.forEach(function(message) {
+          const messageDiv = document.createElement("div");
+          messageDiv.classList.add("message");
+    
+          const messageP = document.createElement("p");
+          messageP = message.content;
+          messageDiv.appendChild(messageP);
+    
+          messageWall.appendChild(messageDiv);
+        });
+      }
+   
+  });
+  */
