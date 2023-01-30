@@ -197,7 +197,7 @@ try{
         let infoHome=document.querySelectorAll("p.infoHome")[0];
         infoHome.innerHTML="Hello, I'm from "+userdata.city+" in "+userdata.country;
 
-        let imagesrc = "https://randomuser.me/api/portraits/lego/"+Math.floor(Math.random() * 10) +".jpg";
+        let imagesrc = "https://randomuser.me/api/portraits/lego/"+hashfunc(userdata.email) +".jpg";
         document.getElementById("profileImage").src=imagesrc;
 });
 }catch(e){
@@ -300,7 +300,7 @@ document.addEventListener("DOMContentLoaded", function() {
           messageDiv.classList.add("message");
 
           const avatarImg = document.createElement("img");
-          avatarImg.src = "https://randomuser.me/api/portraits/lego/"+Math.floor(Math.random() * 10) +".jpg";
+          avatarImg.src = "https://randomuser.me/api/portraits/lego/"+hashfunc(message.writer) +".jpg";
           avatarImg.alt = "User Avatar";
           messageDiv.appendChild(avatarImg);
 
@@ -356,7 +356,7 @@ try{
             infoBrowse.innerHTML="Hello, I'm from "+userdata.city+" in "+userdata.country;
 
             let browseImage=document.getElementById("browseImage");
-            browseImage.src = "https://randomuser.me/api/portraits/lego/"+Math.floor(Math.random() * 10) +".jpg";
+            browseImage.src = "https://randomuser.me/api/portraits/lego/"+hashfunc(userSearched) +".jpg";
         
 
             //load user wall
@@ -384,7 +384,7 @@ try{
           messageDiv.classList.add("message");
     
           const avatarImg = document.createElement("img");
-          avatarImg.src = "https://randomuser.me/api/portraits/lego/"+Math.floor(Math.random() * 10) +".jpg";
+          avatarImg.src = "https://randomuser.me/api/portraits/lego/"+hashfunc(message.writer) +".jpg";
           avatarImg.alt = "User Avatar";
           messageDiv.appendChild(avatarImg);
     
@@ -409,4 +409,11 @@ try{
 }catch(e){};
     
     
-    
+function hashfunc(String){
+    let result=0;
+    for(k of String){
+        result=result+k.charCodeAt();
+    }
+    result=result%10;
+    return result;
+} 
