@@ -92,7 +92,7 @@
         <nav>
             <ul>
                 <li class="homeButton">Home</li>
-                <li class="browseButton">Browse</li>
+                <li class="browseButton" id="browseButton">Browse</li>
                 <li class="accountButton">Account</li>
             </ul>
         </nav>
@@ -123,18 +123,51 @@
             <button id="reloadWallBtn">Reload Wall</button>
             <div id="messageWall">
                 <!-- display a list of messages here -->
-                <p>MARIO</p>
             </div>
           </div>
           
 
 
     </section>
-
+    
     <section class="browsepage">
-        <h1>This page represent your browse page.This block's display property will set to none once you choose other tab</h1>
-        <h1>The default set should be none</h1>
 
+
+        
+        <!-- Search bar -->
+        <div class="search-container">
+            <input id="browseInput" type="text" placeholder="Search...">
+            <button id="browseBtn">Search</button>
+        </div>
+
+        <!-- HOMETAB -->
+        <div id="homeTab">
+            
+            <div id="userInfo">
+              <!-- display user's personal information here -->
+                <div class="card">
+                    <div class="firstinfo">
+                        <img id="profileImage"/>
+                        <div class="profileinfo">
+                            <h1 class="nameHome infokey infovalue"></h1>
+                            <h3 class="userHome infokey infovalue"></h3>
+                            <p class="infoHome infokey infovalue"></p>
+                        </div>
+                    </div>
+            </div>
+
+            </div>
+            <div id="postMessage">
+              <textarea id="messageText"></textarea>
+              <input type="email" id="email" placeholder="Email of recipient">
+              <button id="postBtn">Post</button>
+            </div>
+            <button id="reloadWallBtn">Reload Wall</button>
+            <div id="messageWall">
+                <!-- display a list of messages here -->
+            </div>
+          </div>
+    
 
     </section>
 

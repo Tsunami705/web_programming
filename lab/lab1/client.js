@@ -285,10 +285,16 @@ document.addEventListener("DOMContentLoaded", function() {
     reloadWallBtn.addEventListener("click", reloadWall);
   
     function reloadWall() {
-        let messages = serverstub.getUserMessagesByToken(Token).data;
+        let messages = serverstub.getUserMessagesByToken(Token);
+        
+        if(messages.success == false){
+            alert("Something went wrong while retriving messages");
+            return;
+        } 
+
         messageWall.innerHTML = "";
         
-        messages.forEach(function(message) {
+        messages.data.forEach(function(message) {
             
           const messageDiv = document.createElement("div");
           messageDiv.classList.add("message");
@@ -297,52 +303,48 @@ document.addEventListener("DOMContentLoaded", function() {
           avatarImg.src = "https://randomuser.me/api/portraits/lego/"+Math.floor(Math.random() * 10) +".jpg";
           avatarImg.alt = "User Avatar";
           messageDiv.appendChild(avatarImg);
+
+          const textDiv = document.createElement("div");
+          textDiv.classList.add("textMessage");
     
+          const writerP = document.createElement("h3");
+          writerP.textContent = message.writer;
+          textDiv.appendChild(writerP);
+
           const messageP = document.createElement("p");
           messageP.textContent = message.content;
-          messageDiv.appendChild(messageP);
+          textDiv.appendChild(messageP);
+
+
+          messageDiv.appendChild(textDiv);
     
           messageWall.appendChild(messageDiv);
         });
       }
 });
-  /*
 
-document.addEventListener("DOMContentLoaded", function() {
-    const postBtn = document.querySelector("#postBtn");
-    const messageText = document.querySelector("#messageText");
-    const email = document.querySelector("#email");
-    const messageWall = document.querySelector("#messageWall");
-    const reloadWallBtn = document.querySelector("#reloadWallBtn");
-    
-  
-    postBtn.addEventListener("click", function() {
-      const message = messageText.value;
-      const recipientEmail = email.value;
-  
-      serverstub.postMessage(Token, message, recipientEmail);
-      messageText.value = "";
-      email.value = "";
-      reloadWall();
-    });
 
-    reloadWallBtn.addEventListener("click", reloadWall);
-  
-    function reloadWall() {
-        const messages = serverstub.getUserMessagesByToken(Token);
-        messageWall.innerHTML = "";
-        
-        messages.data.forEach(function(message) {
-          const messageDiv = document.createElement("div");
-          messageDiv.classList.add("message");
+try{
+
     
-          const messageP = document.createElement("p");
-          messageP = message.content;
-          messageDiv.appendChild(messageP);
-    
-          messageWall.appendChild(messageDiv);
-        });
-      }
-   
-  });
-  */
+
+    browseBtn.addEventListener("click", function(){
+        let input=document.querySelector("#browseInput");
+
+        let userData = serverstub.getUserDataByEmail(Token, input.value);
+
+        if(userData.success == false){
+            alert("User not exist");
+            return;            
+        }else{
+            // Show the div with user informmation
+            //load content
+        }
+
+
+
+    })
+
+}catch(e){
+
+}

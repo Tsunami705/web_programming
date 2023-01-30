@@ -302,6 +302,10 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+#browseTab {
+  display: none;
+}
+
 #userInfo {
   display: flex;
   align-items: center;
@@ -366,6 +370,11 @@ body {
   margin-right: 10px;
 }
 
+.message h3 {
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
 .message p {
   font-size: 14px;
   margin-bottom: 0;
@@ -419,4 +428,31 @@ body {
   color: #5A5A5A;
   line-height: 1.2;
   font-style: initial;
+}
+
+/**********SEARCHBAR*********/
+.search-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 30px;
+}
+
+input[type=text] {
+  width: 60%;
+  padding: 10px;
+  font-size: 18px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-right: 10px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: blue;
+  color: white;
+  border-radius: 5px;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
 }/*# sourceMappingURL=client.css.map */
