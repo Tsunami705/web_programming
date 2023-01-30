@@ -154,6 +154,7 @@ header.tabcard nav ul {
 header.tabcard nav ul li {
   padding: 2rem 4rem;
   font-size: 2rem;
+  font-weight: bold;
   border-radius: 50%;
   color: rgb(144, 111, 227);
   cursor: pointer;
@@ -161,7 +162,7 @@ header.tabcard nav ul li {
 }
 
 header.tabcard nav ul li:hover {
-  background-color: rgb(201, 196, 245);
+  color: rgb(113, 65, 234);
 }
 
 section.homepage {
@@ -303,8 +304,7 @@ body {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: none;
 }
 
 #browseTab {
@@ -313,12 +313,12 @@ body {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: none;
 }
 
 #userInfo {
   display: flex;
+  flex-direction: column;
   align-items: center;
   margin-bottom: 20px;
 }
@@ -333,12 +333,17 @@ body {
 #postMessage {
   display: flex;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: auto;
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid rebeccapurple;
+  border-radius: 5px;
 }
 
 #postMessage textarea {
   width: 100%;
-  height: 80px;
+  height: 40px;
+  width: 200%;
   padding: 10px;
   border: 1px solid #e6e6e6;
   border-radius: 5px;
@@ -365,12 +370,20 @@ body {
   cursor: pointer;
 }
 
+#postMessage button:hover {
+  background-color: #1d8ff2;
+}
+
 .message {
   display: flex;
+  width: 600px;
   align-items: center;
+  margin-top: 20px;
   margin-bottom: 20px;
   padding: 20px;
   background-color: white;
+  border: 1px solid #1DA1F2;
+  border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -393,6 +406,7 @@ body {
 
 #reloadWallBtn {
   padding: 10px 20px;
+  margin-left: 100px;
   background-color: white;
   color: #1DA1F2;
   border: 1px solid #1DA1F2;
@@ -401,14 +415,23 @@ body {
   float: right;
 }
 
+#reloadWallBtn:hover {
+  background-color: rgba(29, 160, 242, 0.0509803922);
+}
+
 #BreloadWallBtn {
   padding: 10px 20px;
+  margin-left: 100px;
   background-color: white;
   color: #1DA1F2;
   border: 1px solid #1DA1F2;
   border-radius: 5px;
   cursor: pointer;
   float: right;
+}
+
+#BreloadWallBtn:hover {
+  background-color: rgba(29, 160, 242, 0.0509803922);
 }
 
 /**********************************/
@@ -419,7 +442,7 @@ body {
   border-radius: 3px;
   background-color: white;
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
-  position: relative;
+  position: flex;
   align-items: center;
 }
 
@@ -434,15 +457,19 @@ body {
   height: 120px;
 }
 .firstinfo .profileinfo {
+  text-align: center;
   padding: 0px 20px;
 }
 .firstinfo .profileinfo h1 {
-  font-size: 1.8em;
+  font-size: 20px;
 }
 .firstinfo .profileinfo h3 {
-  font-size: 1.2em;
+  font-size: 14px;
   color: rgb(109, 186, 238);
   font-style: italic;
+}
+.firstinfo .profileinfo p {
+  font-size: 14px;
 }
 
 /**********SEARCHBAR*********/
@@ -458,16 +485,20 @@ body {
   padding: 10px;
   font-size: 18px;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid #1DA1F2;
   margin-right: 10px;
 }
 
 #browseBtn {
   padding: 10px 20px;
-  background-color: blue;
+  background-color: #1DA1F2;
   color: white;
   border-radius: 5px;
   font-size: 18px;
   border: none;
   cursor: pointer;
+}
+
+#browseBtn:hover {
+  background-color: #1d8ff2;
 }/*# sourceMappingURL=client.css.map */

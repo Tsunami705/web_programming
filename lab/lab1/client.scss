@@ -150,6 +150,7 @@ header.tabcard{
             li{
                 padding: 2rem 4rem;
                 font-size: 2rem;
+                font-weight: bold;
                 border-radius: 50%;
                 color: rgb(144, 111, 227);
                 cursor: pointer;
@@ -160,7 +161,8 @@ header.tabcard{
 }
 
 header.tabcard nav ul li:hover{
-    background-color: rgb(201, 196, 245);
+    //background-color: rgb(201, 196, 245);
+    color: rgb(113, 65, 234);
 }
 
 // header.tabcard nav ul li span{
@@ -322,8 +324,8 @@ body {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: none;
+    //box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
 
   #browseTab {
@@ -332,12 +334,13 @@ body {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    background-color: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background-color: none;
+    //box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
   
   #userInfo {
     display: flex;
+    flex-direction: column;
     align-items: center;
     margin-bottom: 20px;
   }
@@ -352,12 +355,17 @@ body {
   #postMessage {
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: auto;
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid rebeccapurple;
+    border-radius: 5px;
   }
   
   #postMessage textarea {
     width: 100%;
-    height: 80px;
+    height: 40px;
+    width: 200%;
     padding: 10px;
     border: 1px solid #e6e6e6;
     border-radius: 5px;
@@ -383,13 +391,21 @@ body {
     border-radius: 5px;
     cursor: pointer;
   }
+
+  #postMessage button:hover{
+    background-color:#1d8ff2;
+  }
   
   .message {
     display: flex;
+    width: 600px;
     align-items: center;
+    margin-top: 20px;
     margin-bottom: 20px;
     padding: 20px;
     background-color: white;
+    border: 1px solid #1DA1F2;
+    border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
   
@@ -412,24 +428,34 @@ body {
   
   #reloadWallBtn {
     padding: 10px 20px;
+    margin-left: 100px;
     background-color: white;
     color: #1DA1F2;
     border: 1px solid #1DA1F2;
     border-radius: 5px;
     cursor: pointer;
     float: right;
-  }
+}
 
-  #BreloadWallBtn {
+#reloadWallBtn:hover{
+    background-color: #1da0f20d;
+}
+
+
+#BreloadWallBtn {
     padding: 10px 20px;
+    margin-left: 100px;
     background-color: white;
     color: #1DA1F2;
     border: 1px solid #1DA1F2;
     border-radius: 5px;
     cursor: pointer;
     float: right;
-  }
+}
 
+#BreloadWallBtn:hover{
+    background-color: #1da0f20d;
+}
 
   /**********************************/  
   
@@ -440,7 +466,7 @@ body {
     border-radius: 3px;
     background-color: white;
     box-shadow: 0px 10px 20px rgba(0,0,0,0.2);
-    position: relative;
+    position: flex;
     align-items: center;
   }
 
@@ -455,12 +481,14 @@ body {
     }
 
     .profileinfo{
+        text-align: center;
       padding: 0px 20px;
-      h1{ font-size: 1.8em;}
-      h3{ font-size: 1.2em;
+      h1{ font-size: 20px;}
+      h3{ font-size: 14px;
           color: rgb(109, 186, 238);
           font-style: italic;
       }
+      p{ font-size: 14px; }
     }
   }
 
@@ -481,16 +509,20 @@ body {
   padding: 10px;
   font-size: 18px;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid #1DA1F2;
   margin-right: 10px;
 }
 
 #browseBtn {
   padding: 10px 20px;
-  background-color: blue;
+  background-color: #1DA1F2;
   color: white;
   border-radius: 5px;
   font-size: 18px;
   border: none;
   cursor: pointer;
+}
+
+#browseBtn:hover{
+    background-color:#1d8ff2;
 }
