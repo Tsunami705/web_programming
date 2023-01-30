@@ -304,6 +304,12 @@ body {
 
 #browseTab {
   display: none;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 #userInfo {
@@ -390,6 +396,16 @@ body {
   float: right;
 }
 
+#BreloadWallBtn {
+  padding: 10px 20px;
+  background-color: white;
+  color: #1DA1F2;
+  border: 1px solid #1DA1F2;
+  border-radius: 5px;
+  cursor: pointer;
+  float: right;
+}
+
 /**********************************/
 .card {
   width: 800px;
@@ -422,12 +438,6 @@ body {
   font-size: 1.2em;
   color: rgb(109, 186, 238);
   font-style: italic;
-}
-.firstinfo .profileinfo p.bio {
-  padding: 10px 0px;
-  color: #5A5A5A;
-  line-height: 1.2;
-  font-style: initial;
 }
 
 /**********SEARCHBAR*********/

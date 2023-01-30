@@ -324,9 +324,10 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
-try{
 
-    
+
+try{
+    let userSearched=null;
 
     browseBtn.addEventListener("click", function(){
         let input=document.querySelector("#browseInput");
@@ -338,13 +339,74 @@ try{
             return;            
         }else{
             // Show the div with user informmation
-            //load content
+            browseTab.style.display="block";
+
+            //profile info
+            let userdata=serverstub.getUserDataByEmail(Token, input.value).data;
+            console.log(userdata);     
+            
+            let nameBrowse=document.querySelectorAll("h1.nameBrowse")[0];
+            nameBrowse.innerHTML=userdata.firstname+" "+userdata.familyname;
+
+            let userBrowse=document.querySelectorAll("h3.userBrowse")[0];
+            userBrowse.innerHTML=userdata.email;
+            userSearched=userdata.email;
+
+            let infoBrowse=document.querySelectorAll("p.infoBrowse")[0];
+            infoBrowse.innerHTML="Hello, I'm from "+userdata.city+" in "+userdata.country;
+
+            let browseImage=document.getElementById("browseImage");
+            browseImage.src = "https://randomuser.me/api/portraits/lego/"+Math.floor(Math.random() * 10) +".jpg";
+        
+
+            //load user wall
+            BreloadWall();
         }
+    });
 
 
+    BreloadWallBtn.addEventListener("click", BreloadWall);
+    
+    function BreloadWall(){
+        console.log(userSearched);
+        let messages = serverstub.getUserMessagesByEmail(Token, userSearched);
 
-    })
+        if(messages.success == false){
+            alert("Something went wrong while retriving messages");
+            return;
+        } 
+    
+        BmessageWall.innerHTML = "";
+        
+        messages.data.forEach(function(message) {
+            
+          const messageDiv = document.createElement("div");
+          messageDiv.classList.add("message");
+    
+          const avatarImg = document.createElement("img");
+          avatarImg.src = "https://randomuser.me/api/portraits/lego/"+Math.floor(Math.random() * 10) +".jpg";
+          avatarImg.alt = "User Avatar";
+          messageDiv.appendChild(avatarImg);
+    
+          const textDiv = document.createElement("div");
+          textDiv.classList.add("textMessage");
+    
+          const writerP = document.createElement("h3");
+          writerP.textContent = message.writer;
+          textDiv.appendChild(writerP);
+    
+          const messageP = document.createElement("p");
+          messageP.textContent = message.content;
+          textDiv.appendChild(messageP);
+    
+    
+          messageDiv.appendChild(textDiv);
+    
+          BmessageWall.appendChild(messageDiv);
 
-}catch(e){
-
-}
+        });
+    };
+}catch(e){};
+    
+    
+    
