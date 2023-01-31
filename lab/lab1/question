@@ -1,0 +1,42 @@
+1. Why do we validate data before sending it to the server at client-side, as opposed to just letting the server validate data before using it? What we get and what we lose by it?
+For user experience. If every operation is transmitted from the backend to the frontend, it will put a lot of pressure on the server. But at the same time, our program also loses its robustness and is not safe enough.
+
+2. How secure is the system using an access token to authenticate? Is there any way to circumvent it and get access to private data?
+This is not very safe, because we have no means of verifying whether the token is authentic (especially the token is randomly generated), we should encrypt and decrypt the token, or upload a copy on the server instead of localStorage, which is used every time the user Compare them during the next operation. But now we only need to create a new loggedinusers key on the browser and modify its value appropriately to bypass it. The website does not have a good detection mechanism.
+
+3. What would happen if a user were to post a message containing JavaScript-code? Would the code be executed? How can it oppose a threat to the system? What would the counter measure?
+In our implementation, adding the line of code <script> alert('This is injection attack!')</script> will not be implemented, because we separate the front and back ends and use createElement to insert text. In addition, in the front and back ends In the case of separation, using innerText or innerHTML to insert text, the code will not be triggered. When inserted through innerHTML, you will find that the script tag is parsed as a tag, but the internal content will not be executed and rendered.
+
+4. What happens when we use the back/forward buttons while working with Twidder? Is this the expected behavior? Why are we getting this behavior? What would be the solution?
+Except for the behavior of submitting the form, other behaviors will not generate back/forward. It seems that only when the url changes will there be back/forward behavior. In our implementation, only submitting the form will generate back/forward behavior, because in client.html, the method of the form tag is set to get (default), so after submission, the filled information will be displayed on the url, thereby generating forward /back behavior. However, when back is clicked, the user will not be logged out, because the user's token is still stored in localStorage.
+
+5. What happens when the user refreshes the page while working with Twidder? Is this the expected behavior? Why are we getting this behavior?
+The user will stay on this interface. Because I set up caching in js, saving the final page where the user stays, and whenever the page is reloaded, js will read the session storage and go to that page automatically.
+
+6. Is it a good idea to read views from the server instead of embedding them inside of the 'client.html´? What are the advantages and disadvantages of it comparing to the current approach?
+
+7. Is it a good idea to return true or false to state if an operation has gone wrong at the server-side or not? How can it be improved?
+Yes, when the backend makes an error, if false is returned, the control flow of the frontend can receive the error message. On the contrary, if false is not returned, the frontend cannot know the state of the backend and cannot receive information. But this also has disadvantages. When the backend makes an error, we cannot know the specific error, which is inconvenient to debug. how to improve?
+
+8. Is it reliable to perform data validation at client-side? If so please explain how and if not what would be the solution to improve it?
+It's not like this. There may be situations where the frontend validation succeeds but the backend fails. For example, enter a mobile phone number and send a SMS verification code to the customer. When the customer sends a fake mobile phone number, it can pass the front-end verification, but the text message sent by the back-end cannot be received by this mobile phone number. Therefore, the best solution is to perform data verification on both the front end and the back end.
+
+9. Why isn't it a good idea to use tables for layout purposes? What would be the replacement?
+
+table takes more bytes than other html tags. (Causes download time delay and takes up more traffic resources of the server)
+table will block the rendering order of the browser rendering engine. (It will delay the page generation speed and make users wait longer)
+When displaying pictures in the table, you need to cut a single, logical picture into multiple pictures. (Increase design complexity, increase page load time, increase number of http sessions)
+In some browsers, there will be problems with copying the text in the table. (would make users unhappy)
+The table will affect the effectiveness of some internal layout attributes (such as the height:100% of the elements in it) (restricting the freedom of page design)
+
+You can use div+css positioning to layout.
+
+10. How do you think Single Page Applications can contribute to the future of the web? What are their advantages and disadvantages from usage and development point of views?
+An application that completes the complex page interaction of the entire website in only one page without refreshing the page.
+Advantages:
+     1. Content changes do not require a full page reload
+     2. Based on the above point, SPA has relatively little pressure on the server.
+     3. Good front and rear end separation. SPA and RESTful architecture are used together, the backend is no longer responsible for template rendering and output page work, the web frontend and various mobile terminals are in the same position, and the backend API is generalized.
+Disadvantages:
+     1. If the page contains a lot of content, it will take a long time to load.
+     2. Navigation is not available. If you must navigate, you need to realize forward and backward by yourself.
