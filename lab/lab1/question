@@ -39,4 +39,4 @@ Advantages:
      3. Good front and rear end separation. SPA and RESTful architecture are used together, the backend is no longer responsible for template rendering and output page work, the web frontend and various mobile terminals are in the same position, and the backend API is generalized.
 Disadvantages:
      1. If the page contains a lot of content, it will take a long time to load.
-     2. Navigation is not available. If you must navigate, you need to realize forward and backward by yourself.
+     2. Navigation is not available. If you must navigate, you need to implement forward and backward by yourself.

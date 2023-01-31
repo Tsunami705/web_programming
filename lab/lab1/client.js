@@ -25,7 +25,7 @@ if((loggedinusers==null)||(Object.keys(loggedinusers).length===2)){
     browsePage.style.display="none";
     accountPage.style.display="none";
     homePage.style.display="block";
-    sessionStorage.setItem("tabLiNum","home");
+    // sessionStorage.setItem("tabLiNum","home");
 }
 
 // Step 3:Confirm password
@@ -121,52 +121,97 @@ let browsePage=document.querySelector("section.browsepage");
 let accountPage=document.querySelector("section.accountpage");
 
 // Refresh the web page without changing tabs
-let tabLiNum=sessionStorage.getItem("tabLiNum");
-if(tabLiNum===null){}else if(tabLiNum==="home"){
-}else if(tabLiNum==="browse"){
-    browsePage.style.display="block";
-    accountPage.style.display="none";
-    homePage.style.display="none";
-}else if(tabLiNum==="account"){
-    browsePage.style.display="none";
-    accountPage.style.display="block";
-    homePage.style.display="none";
-}
+// let tabLiNum=sessionStorage.getItem("tabLiNum");
+// if(tabLiNum===null){}else if(tabLiNum==="home"){
+// }else if(tabLiNum==="browse"){
+//     browsePage.style.display="block";
+//     accountPage.style.display="none";
+//     homePage.style.display="none";
+// }else if(tabLiNum==="account"){
+//     browsePage.style.display="none";
+//     accountPage.style.display="block";
+//     homePage.style.display="none";
+// }
 
-homeButton.addEventListener("click",()=>{
-    browsePage.style.display="none";
-    accountPage.style.display="none";
-    homePage.style.display="block";
-    sessionStorage.setItem("tabLiNum","home");
-});
+// homeButton.addEventListener("click",()=>{
+//     browsePage.style.display="none";
+//     accountPage.style.display="none";
+//     homePage.style.display="block";
+//     sessionStorage.setItem("tabLiNum","home");
+// });
 
-logoButton.addEventListener("click",()=>{
-    browsePage.style.display="none";
-    accountPage.style.display="none";
-    homePage.style.display="block";
-    sessionStorage.setItem("tabLiNum","home");
-});
+// logoButton.addEventListener("click",()=>{
+//     browsePage.style.display="none";
+//     accountPage.style.display="none";
+//     homePage.style.display="block";
+//     sessionStorage.setItem("tabLiNum","home");
+// });
 
-browseButton.addEventListener("click",()=>{
-    browsePage.style.display="block";
-    accountPage.style.display="none";
-    homePage.style.display="none";
-    sessionStorage.setItem("tabLiNum","browse");
-});
+// browseButton.addEventListener("click",()=>{
+//     browsePage.style.display="block";
+//     accountPage.style.display="none";
+//     homePage.style.display="none";
+//     sessionStorage.setItem("tabLiNum","browse");
+// });
 
-accountButton.addEventListener("click",()=>{
-    browsePage.style.display="none";
-    accountPage.style.display="block";
-    homePage.style.display="none";
-    sessionStorage.setItem("tabLiNum","account");
-});
+// accountButton.addEventListener("click",()=>{
+//     browsePage.style.display="none";
+//     accountPage.style.display="block";
+//     homePage.style.display="none";
+//     sessionStorage.setItem("tabLiNum","account");
+// });
 
 
 // Step 7
+
+
 let changepswButton=document.querySelector("div.changepsw");
 try{
     window.addEventListener("load",()=>{
-        // Step 7:display your account information
+    // Step 7:display your account information
+
+    // Refresh the web page without changing tabs
+    let tabLiNum=sessionStorage.getItem("tabLiNum");
+    if(tabLiNum===null){}else if(tabLiNum==="home"){
+    }else if(tabLiNum==="browse"){
+        browsePage.style.display="block";
+        accountPage.style.display="none";
+        homePage.style.display="none";
+    }else if(tabLiNum==="account"){
+        browsePage.style.display="none";
+        accountPage.style.display="block";
+        homePage.style.display="none";
+    }
+
+    homeButton.addEventListener("click",()=>{
+        browsePage.style.display="none";
+        accountPage.style.display="none";
+        homePage.style.display="block";
+        sessionStorage.setItem("tabLiNum","home");
+    });
+
+    logoButton.addEventListener("click",()=>{
+        browsePage.style.display="none";
+        accountPage.style.display="none";
+        homePage.style.display="block";
+        sessionStorage.setItem("tabLiNum","home");
+    });
+
+    browseButton.addEventListener("click",()=>{
+        browsePage.style.display="block";
+        accountPage.style.display="none";
+        homePage.style.display="none";
+        sessionStorage.setItem("tabLiNum","browse");
+    });
+
+    accountButton.addEventListener("click",()=>{
+        browsePage.style.display="none";
+        accountPage.style.display="block";
+        homePage.style.display="none";
+        sessionStorage.setItem("tabLiNum","account");
+    });
+
+
         // let Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
         let userdata=serverstub.getUserDataByToken(Token).data;
         console.log(userdata);
@@ -208,6 +253,7 @@ try{
     signoutButton=document.querySelector("div.logout");
     signoutButton.addEventListener("click",()=>{
         alert(serverstub.signOut(Token).message);
+        sessionStorage.setItem("tabLiNum","home");
         // localStorage.removeItem("loggedinusers");
         location.reload();
     })
