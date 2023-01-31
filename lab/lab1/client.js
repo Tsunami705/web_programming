@@ -321,11 +321,19 @@ document.addEventListener("DOMContentLoaded", function() {
     postBtn.addEventListener("click", function() {
       const message = messageText.value;
       const recipientEmail = email.value;
-  
-      serverstub.postMessage(Token, message, recipientEmail);
-      messageText.value = "";
-      email.value = "";
-      reloadWall();
+
+        if(!message.length){
+            document.getElementById("messageText").placeholder = "Write something here!";
+        }else if(!serverstub.postMessage(Token, message, recipientEmail).success){
+            document.getElementById("email").value = "";
+            document.getElementById("email").placeholder = "Incorrect Email";
+        } else{
+            document.getElementById("messageText").placeholder = "Message...";
+            document.getElementById("email").placeholder = "User Email";
+            messageText.value = "";
+            email.value = "";
+            reloadWall();
+        }
     });
     
     reloadWallBtn.addEventListener("click", reloadWall);
@@ -333,10 +341,12 @@ document.addEventListener("DOMContentLoaded", function() {
     function reloadWall() {
         let messages = serverstub.getUserMessagesByToken(Token);
         
+        /*
         if(messages.success == false){
             alert("Something went wrong while retriving messages");
             return;
         } 
+        */ 
 
         messageWall.innerHTML = "";
         
@@ -381,9 +391,11 @@ try{
         let userData = serverstub.getUserDataByEmail(Token, input.value);
 
         if(userData.success == false){
-            alert("User not exist");
+            document.getElementById("browseInput").placeholder = "User not exist!";
+            document.getElementById("browseInput").value = "";
             return;            
         }else{
+            document.getElementById("browseInput").placeholder = "Who are you looking for?";
             // Show the div with user informmation
             browseTab.style.display="block";
 
