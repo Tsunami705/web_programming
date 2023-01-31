@@ -338,19 +338,20 @@ body {
     //box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
   
-  #userInfo {
+  .userInfo {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-bottom: 20px;
   }
   
-  #userInfo img {
+  .userInfo img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     margin-right: 10px;
   }
+
   
   #postMessage {
     display: flex;
