@@ -1,23 +1,16 @@
+
 //Step 5:skip to the right page
 let loggedinusers=localStorage.getItem("loggedinusers");
-// console.log(Object.keys(loggedinusers).length);
-// console.log(JSON.stringify(loggedinusers));
+let welcomepage=document.querySelector("#welcomepage");
+let profilepage=document.querySelector("#profilepage");
 
 if((loggedinusers==null)||(Object.keys(loggedinusers).length===2)){
-    let pageload=document.querySelector("#welcomeview");
-    let body=document.querySelector("body");
-    body.innerHTML=pageload.innerHTML;
-    // console.log(pageload.innerHTML);
+    profilepage.style.display="none";
+    welcomepage.style.display="block";
 }else{
-    // let pageload=document.querySelector("#profileview");
-    // let body=document.querySelector("body");
-    // body.innerHTML=pageload.innerHTML;
-    // let newdiv1=document.createElement("div");
-    // let welcome_information=document.createElement("h1");
-    // // console.log(JSON.parse(loggedinusers));
-    // welcome_information.innerHTML="Welcome, "+Object.values(JSON.parse(loggedinusers))[0];
-    // newdiv1.appendChild(welcome_information);
-    // body.appendChild(newdiv1);
+    profilepage.style.display="block";
+    welcomepage.style.display="none";
+    
     let homePage=document.querySelector("section.homepage");
     let browsePage=document.querySelector("section.browsepage");
     let accountPage=document.querySelector("section.accountpage");
@@ -30,7 +23,6 @@ if((loggedinusers==null)||(Object.keys(loggedinusers).length===2)){
 
 // Step 3:Confirm password
 function confirm_psw(repsw){
-    // console.log(input);
     let psw=document.getElementById("psw");
     if(psw.value!==repsw.value){
         psw.setCustomValidity("Password Must be Match.");
@@ -45,10 +37,6 @@ function confirm_psw(repsw){
 // Step 4:Signup Mechanism
 try{
     let signup=document.querySelector("#signupform");
-    // console.log(signup);
-    // console.log(localStorage.getItem("customerData"));
-    // let signupbutton=signup[8];
-
     signup.addEventListener("submit",()=>{
 
         let personalData={
@@ -70,14 +58,25 @@ try{
             customArray.push(personalData);
             localStorage.setItem("customerData",JSON.stringify(customArray));
         }
-
-        alert(serverstub.signUp(personalData)["message"]);
+        let check_if_signup_message_appear=document.querySelector("h3.signup_message");
+        if(!check_if_signup_message_appear){
+            null;
+        }else{
+            check_if_signup_message_appear.remove();
+        }
+        let signup_data=serverstub.signUp(personalData);
+        let signup_message=document.createElement("h3");
+        signup_message.className="signup_message";
+        signup_message.innerHTML=signup_data.message;
+        signup_message.style.margin="1rem";
+        document.querySelector("#signup").appendChild(signup_message);
 
     });
 }catch(error){
     console.log(error);
 }
 
+let j=true;
 // Step 5:Signin Mechanism
 try{
     let signin=document.querySelector("#signinform");
@@ -90,15 +89,40 @@ try{
             password:signin[1].value
         };
         let signinData=serverstub.signIn(loginData.username,loginData.password);
+        console.log(signinData.message);
         //session storage
         // sessionStorage.setItem(JSON.stringify(loginData.username),signinData.data);
-        alert(signinData.message);
+        let check_if_signin_message_exist=document.querySelector("h3.signin_fail_message");
         if(signinData.success){
-            setTimeout(()=>{
-                location.reload();
-          },500);
+            if(!check_if_signin_message_exist){
+                null;
+            }else{
+                check_if_signin_message_exist.remove();
+            }
+
+            var Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
+            // console.log(Token);
+            profilepage.style.display="block";
+            welcomepage.style.display="none";
+            browsePage.style.display="none";
+            accountPage.style.display="none";
+            homePage.style.display="block";
+            sessionStorage.setItem("tabLiNum","home");
+
+            load_profile_page();
+
         }else{
-            null;
+            if(!check_if_signin_message_exist){
+                null;
+            }else{
+                check_if_signin_message_exist.remove();
+            }
+            let signin_fail_message=document.createElement("h3");
+            signin_fail_message.innerHTML=signinData.message;
+            signin_fail_message.className="signin_fail_message";
+            signin_fail_message.style.fontSize="0.5px";
+            document.querySelector("#signin").appendChild(signin_fail_message);
+
         }
 
     });
@@ -107,6 +131,7 @@ try{
 }
 
 let Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
+
 
 // Step 6:Implementing tabs
 let logoButton=document.querySelector("header h1");
@@ -166,85 +191,16 @@ let accountPage=document.querySelector("section.accountpage");
 
 
 let changepswButton=document.querySelector("div.changepsw");
+
 try{
     window.addEventListener("load",()=>{
-    // Step 7:display your account information
-
-    // Refresh the web page without changing tabs
-    let tabLiNum=sessionStorage.getItem("tabLiNum");
-    if(tabLiNum===null){}else if(tabLiNum==="home"){
-    }else if(tabLiNum==="browse"){
-        browsePage.style.display="block";
-        accountPage.style.display="none";
-        homePage.style.display="none";
-    }else if(tabLiNum==="account"){
-        browsePage.style.display="none";
-        accountPage.style.display="block";
-        homePage.style.display="none";
-    }
-
-    homeButton.addEventListener("click",()=>{
-        browsePage.style.display="none";
-        accountPage.style.display="none";
-        homePage.style.display="block";
-        sessionStorage.setItem("tabLiNum","home");
+        var Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
+        if(!Token){
+            null;
+        }else{
+            load_profile_page();
+        }
     });
-
-    logoButton.addEventListener("click",()=>{
-        browsePage.style.display="none";
-        accountPage.style.display="none";
-        homePage.style.display="block";
-        sessionStorage.setItem("tabLiNum","home");
-    });
-
-    browseButton.addEventListener("click",()=>{
-        browsePage.style.display="block";
-        accountPage.style.display="none";
-        homePage.style.display="none";
-        sessionStorage.setItem("tabLiNum","browse");
-    });
-
-    accountButton.addEventListener("click",()=>{
-        browsePage.style.display="none";
-        accountPage.style.display="block";
-        homePage.style.display="none";
-        sessionStorage.setItem("tabLiNum","account");
-    });
-
-
-        // let Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
-        let userdata=serverstub.getUserDataByToken(Token).data;
-        console.log(userdata);
-        //email
-        let usernameinfo=document.querySelectorAll("div.infobox div.usernameinfo")[1];
-        usernameinfo.innerHTML=userdata.email;
-        //name
-        let nameinfo=document.querySelectorAll("div.infobox div.nameinfo")[1];
-        nameinfo.innerHTML=userdata.firstname+" "+userdata.familyname;
-        //gender
-        let genderinfo=document.querySelectorAll("div.infobox div.genderinfo")[1];
-        genderinfo.innerHTML=userdata.gender;
-        //city
-        let cityinfo=document.querySelectorAll("div.infobox div.cityinfo")[1];
-        cityinfo.innerHTML=userdata.city;
-        //country
-        let countryinfo=document.querySelectorAll("div.infobox div.countryinfo")[1];
-        countryinfo.innerHTML=userdata.country;
-
-
-        //HOMEPAGE        
-        let nameHome=document.querySelectorAll("h1.nameHome")[0];
-        nameHome.innerHTML=userdata.firstname+" "+userdata.familyname;
-
-        let userHome=document.querySelectorAll("h3.userHome")[0];
-        userHome.innerHTML=userdata.email;
-
-        let infoHome=document.querySelectorAll("p.infoHome")[0];
-        infoHome.innerHTML="Hello, I'm from "+userdata.city+" in "+userdata.country;
-
-        let imagesrc = "https://randomuser.me/api/portraits/lego/"+hashfunc(userdata.email) +".jpg";
-        document.getElementById("profileImage").src=imagesrc;
-});
 }catch(e){
 }
 
@@ -252,10 +208,25 @@ try{
 try{
     signoutButton=document.querySelector("div.logout");
     signoutButton.addEventListener("click",()=>{
-        alert(serverstub.signOut(Token).message);
-        sessionStorage.setItem("tabLiNum","home");
+        let Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
+        signoutData=serverstub.signOut(Token);
+        if(signoutData.success){
+            sessionStorage.setItem("tabLiNum","home");
+            profilepage.style.display="none";
+            welcomepage.style.display="block";
+        }else{
+            let check_if_loggout_information_exist=document.querySelector("h3.fail_message_logout");
+            if(!check_if_loggout_information_exist){
+                null;
+            }else{
+                check_if_loggout_information_exist.remove();
+            }
+            let fail_message_logout=document.createElement("h3");
+            fail_message_logout.innerText=signoutData.message;
+            fail_message_logout.className="fail_message_logout";
+            document.querySelector("section.accountpage").appendChild(fail_message_logout);
+        }
         // localStorage.removeItem("loggedinusers");
-        location.reload();
     })
 }catch(e){
 
@@ -288,12 +259,33 @@ try{
                 let newpswconfirm=changepswform[2];
                 let changepswfun=serverstub.changePassword(Token,oldpsw.value,newpsw.value);
                 let wwww=changepswfun.success
-                if(wwww){
-                    alert("Password changed.Now you should log in again.");
-                    serverstub.signOut(Token);
-                    location.reload();
+                let check_if_prompt_exist=document.querySelector("h3.prompt_information");
+                if(!check_if_prompt_exist){
+                    null;
                 }else{
-                    alert("Wrong password.");
+                    check_if_prompt_exist.remove();
+                }
+                if(wwww){
+                    serverstub.signOut(Token);
+                    document.querySelector("#oldpsw").value="";
+                    document.querySelector("#newpsw").value="";
+                    document.querySelector("#newpswconfirm").value="";
+                    let prompt_information=document.createElement("h3");
+                    prompt_information.innerHTML="Password changed.You will be logged out in three seconds, or refresh the page manually.";
+                    prompt_information.className="prompt_information";
+                    document.querySelector("div.change").appendChild(prompt_information);
+                    setTimeout(()=>{
+                        prompt_information.remove();
+                        changepswView.style.display="none";
+                        profilepage.style.display="none";
+                        welcomepage.style.display="block";
+                    },3000);
+                    i++;
+                }else{
+                    let prompt_information=document.createElement("h3");
+                    prompt_information.innerHTML="Wrong current password.";
+                    prompt_information.className="prompt_information";
+                    document.querySelector("div.change").appendChild(prompt_information);
                 }
             })
         }else{
@@ -309,27 +301,112 @@ try{
 
 /*******************************/
 
+function hashfunc(String){
+    let result=0;
+    for(k of String){
+        result=result+k.charCodeAt();
+    }
+    result=result%10;
+    return result;
+} 
+function load_profile_page(){
+    // Step 7:display your account information
 
-document.addEventListener("DOMContentLoaded", function() {
+// Refresh the web page without changing tabs
+let tabLiNum=sessionStorage.getItem("tabLiNum");
+if(tabLiNum===null){}else if(tabLiNum==="home"){
+}else if(tabLiNum==="browse"){
+    browsePage.style.display="block";
+    accountPage.style.display="none";
+    homePage.style.display="none";
+}else if(tabLiNum==="account"){
+    browsePage.style.display="none";
+    accountPage.style.display="block";
+    homePage.style.display="none";
+}
+
+homeButton.addEventListener("click",()=>{
+    browsePage.style.display="none";
+    accountPage.style.display="none";
+    homePage.style.display="block";
+    sessionStorage.setItem("tabLiNum","home");
+});
+
+logoButton.addEventListener("click",()=>{
+    browsePage.style.display="none";
+    accountPage.style.display="none";
+    homePage.style.display="block";
+    sessionStorage.setItem("tabLiNum","home");
+});
+
+browseButton.addEventListener("click",()=>{
+    browsePage.style.display="block";
+    accountPage.style.display="none";
+    homePage.style.display="none";
+    sessionStorage.setItem("tabLiNum","browse");
+});
+
+accountButton.addEventListener("click",()=>{
+    browsePage.style.display="none";
+    accountPage.style.display="block";
+    homePage.style.display="none";
+    sessionStorage.setItem("tabLiNum","account");
+});
+
+
+    let Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
+    let userdata=serverstub.getUserDataByToken(Token).data;
+    console.log(userdata);
+    //email
+    let usernameinfo=document.querySelectorAll("div.infobox div.usernameinfo")[1];
+    usernameinfo.innerHTML=userdata.email;
+    //name
+    let nameinfo=document.querySelectorAll("div.infobox div.nameinfo")[1];
+    nameinfo.innerHTML=userdata.firstname+" "+userdata.familyname;
+    //gender
+    let genderinfo=document.querySelectorAll("div.infobox div.genderinfo")[1];
+    genderinfo.innerHTML=userdata.gender;
+    //city
+    let cityinfo=document.querySelectorAll("div.infobox div.cityinfo")[1];
+    cityinfo.innerHTML=userdata.city;
+    //country
+    let countryinfo=document.querySelectorAll("div.infobox div.countryinfo")[1];
+    countryinfo.innerHTML=userdata.country;
+
+
+    //HOMEPAGE        
+    let nameHome=document.querySelectorAll("h1.nameHome")[0];
+    nameHome.innerHTML=userdata.firstname+" "+userdata.familyname;
+
+    let userHome=document.querySelectorAll("h3.userHome")[0];
+    userHome.innerHTML=userdata.email;
+
+    let infoHome=document.querySelectorAll("p.infoHome")[0];
+    infoHome.innerHTML="Hello, I'm from "+userdata.city+" in "+userdata.country;
+
+    let imagesrc = "https://randomuser.me/api/portraits/lego/"+hashfunc(userdata.email) +".jpg";
+    document.getElementById("profileImage").src=imagesrc;
+
     const postBtn = document.querySelector("#postBtn");
     const messageText = document.querySelector("#messageText");
-    const email = document.querySelector("#email");
+    const email = document.querySelector("#postemail");
     let messageWall = document.querySelector("#messageWall");
     const reloadWallBtn = document.querySelector("#reloadWallBtn");
     reloadWall();
   
     postBtn.addEventListener("click", function() {
+      var Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
       const message = messageText.value;
       const recipientEmail = email.value;
 
         if(!message.length){
             document.getElementById("messageText").placeholder = "Write something here!";
         }else if(!serverstub.postMessage(Token, message, recipientEmail).success){
-            document.getElementById("email").value = "";
-            document.getElementById("email").placeholder = "Incorrect Email";
+            document.getElementById("postemail").value = "";
+            document.getElementById("postemail").placeholder = "Incorrect Email";
         } else{
             document.getElementById("messageText").placeholder = "Message...";
-            document.getElementById("email").placeholder = "User Email";
+            document.getElementById("postemail").placeholder = "User Email";
             messageText.value = "";
             email.value = "";
             reloadWall();
@@ -339,14 +416,9 @@ document.addEventListener("DOMContentLoaded", function() {
     reloadWallBtn.addEventListener("click", reloadWall);
   
     function reloadWall() {
+        var Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
         let messages = serverstub.getUserMessagesByToken(Token);
         
-        /*
-        if(messages.success == false){
-            alert("Something went wrong while retriving messages");
-            return;
-        } 
-        */ 
 
         messageWall.innerHTML = "";
         
@@ -377,101 +449,167 @@ document.addEventListener("DOMContentLoaded", function() {
           messageWall.appendChild(messageDiv);
         });
       }
-});
-
-
-
-
-try{
-    let userSearched=null;
-
-    browseBtn.addEventListener("click", function(){
-        let input=document.querySelector("#browseInput");
-
-        let userData = serverstub.getUserDataByEmail(Token, input.value);
-
-        if(userData.success == false){
-            document.getElementById("browseInput").placeholder = "User not exist!";
-            document.getElementById("browseInput").value = "";
-            return;            
-        }else{
-            document.getElementById("browseInput").placeholder = "Who are you looking for?";
-            // Show the div with user informmation
-            browseTab.style.display="block";
-
-            //profile info
-            let userdata=serverstub.getUserDataByEmail(Token, input.value).data;
-            console.log(userdata);     
+      try{
+        let userSearched=null;
+    
+        browseBtn.addEventListener("click", function(){
+            let input=document.querySelector("#browseInput");
+            var Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
+            let userData = serverstub.getUserDataByEmail(Token, input.value);
+    
+            if(userData.success == false){
+                document.getElementById("browseInput").placeholder = "User not exist!";
+                document.getElementById("browseInput").value = "";
+                return;            
+            }else{
+                document.getElementById("browseInput").placeholder = "Who are you looking for?";
+                // Show the div with user informmation
+                browseTab.style.display="block";
+    
+                //profile info
+                let userdata=serverstub.getUserDataByEmail(Token, input.value).data;
+                console.log(userdata);     
+                
+                let nameBrowse=document.querySelectorAll("h1.nameBrowse")[0];
+                nameBrowse.innerHTML=userdata.firstname+" "+userdata.familyname;
+    
+                let userBrowse=document.querySelectorAll("h3.userBrowse")[0];
+                userBrowse.innerHTML=userdata.email;
+                userSearched=userdata.email;
+    
+                let infoBrowse=document.querySelectorAll("p.infoBrowse")[0];
+                infoBrowse.innerHTML="Hello, I'm from "+userdata.city+" in "+userdata.country;
+    
+                let browseImage=document.getElementById("browseImage");
+                browseImage.src = "https://randomuser.me/api/portraits/lego/"+hashfunc(userSearched) +".jpg";
             
-            let nameBrowse=document.querySelectorAll("h1.nameBrowse")[0];
-            nameBrowse.innerHTML=userdata.firstname+" "+userdata.familyname;
-
-            let userBrowse=document.querySelectorAll("h3.userBrowse")[0];
-            userBrowse.innerHTML=userdata.email;
-            userSearched=userdata.email;
-
-            let infoBrowse=document.querySelectorAll("p.infoBrowse")[0];
-            infoBrowse.innerHTML="Hello, I'm from "+userdata.city+" in "+userdata.country;
-
-            let browseImage=document.getElementById("browseImage");
-            browseImage.src = "https://randomuser.me/api/portraits/lego/"+hashfunc(userSearched) +".jpg";
-        
-
-            //load user wall
-            BreloadWall();
-        }
-    });
-
-
-    BreloadWallBtn.addEventListener("click", BreloadWall);
     
-    function BreloadWall(){
-        console.log(userSearched);
-        let messages = serverstub.getUserMessagesByEmail(Token, userSearched);
-
-        if(messages.success == false){
-            alert("Something went wrong while retriving messages");
-            return;
-        } 
-    
-        BmessageWall.innerHTML = "";
-        
-        messages.data.forEach(function(message) {
-            
-          const messageDiv = document.createElement("div");
-          messageDiv.classList.add("message");
-    
-          const avatarImg = document.createElement("img");
-          avatarImg.src = "https://randomuser.me/api/portraits/lego/"+hashfunc(message.writer) +".jpg";
-          avatarImg.alt = "User Avatar";
-          messageDiv.appendChild(avatarImg);
-    
-          const textDiv = document.createElement("div");
-          textDiv.classList.add("textMessage");
-    
-          const writerP = document.createElement("h3");
-          writerP.textContent = message.writer;
-          textDiv.appendChild(writerP);
-    
-          const messageP = document.createElement("p");
-          messageP.textContent = message.content;
-          textDiv.appendChild(messageP);
-    
-    
-          messageDiv.appendChild(textDiv);
-    
-          BmessageWall.appendChild(messageDiv);
-
+                //load user wall
+                BreloadWall();
+            }
         });
-    };
-}catch(e){};
     
     
-function hashfunc(String){
-    let result=0;
-    for(k of String){
-        result=result+k.charCodeAt();
-    }
-    result=result%10;
-    return result;
-} 
+        BreloadWallBtn.addEventListener("click", BreloadWall);
+        
+        function BreloadWall(){
+            console.log(userSearched);
+            var Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
+            let messages = serverstub.getUserMessagesByEmail(Token, userSearched);
+        
+            BmessageWall.innerHTML = "";
+            
+            messages.data.forEach(function(message) {
+                
+              const messageDiv = document.createElement("div");
+              messageDiv.classList.add("message");
+        
+              const avatarImg = document.createElement("img");
+              avatarImg.src = "https://randomuser.me/api/portraits/lego/"+hashfunc(message.writer) +".jpg";
+              avatarImg.alt = "User Avatar";
+              messageDiv.appendChild(avatarImg);
+        
+              const textDiv = document.createElement("div");
+              textDiv.classList.add("textMessage");
+        
+              const writerP = document.createElement("h3");
+              writerP.textContent = message.writer;
+              textDiv.appendChild(writerP);
+        
+              const messageP = document.createElement("p");
+              messageP.textContent = message.content;
+              textDiv.appendChild(messageP);
+        
+        
+              messageDiv.appendChild(textDiv);
+        
+              BmessageWall.appendChild(messageDiv);
+    
+            });
+        };
+    }catch(e){};
+    if(!Token){
+
+    }else{
+        try{
+            let userSearched=null;
+        
+            browseBtn.addEventListener("click", function(){
+                let input=document.querySelector("#browseInput");
+                var Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
+                let userData = serverstub.getUserDataByEmail(Token, input.value);
+        
+                if(userData.success == false){
+                    document.getElementById("browseInput").placeholder = "User not exist!";
+                    document.getElementById("browseInput").value = "";
+                    return;            
+                }else{
+                    document.getElementById("browseInput").placeholder = "Who are you looking for?";
+                    // Show the div with user informmation
+                    browseTab.style.display="block";
+        
+                    //profile info
+                    let userdata=serverstub.getUserDataByEmail(Token, input.value).data;
+                    console.log(userdata);     
+                    
+                    let nameBrowse=document.querySelectorAll("h1.nameBrowse")[0];
+                    nameBrowse.innerHTML=userdata.firstname+" "+userdata.familyname;
+        
+                    let userBrowse=document.querySelectorAll("h3.userBrowse")[0];
+                    userBrowse.innerHTML=userdata.email;
+                    userSearched=userdata.email;
+        
+                    let infoBrowse=document.querySelectorAll("p.infoBrowse")[0];
+                    infoBrowse.innerHTML="Hello, I'm from "+userdata.city+" in "+userdata.country;
+        
+                    let browseImage=document.getElementById("browseImage");
+                    browseImage.src = "https://randomuser.me/api/portraits/lego/"+hashfunc(userSearched) +".jpg";
+                
+        
+                    //load user wall
+                    BreloadWall();
+                }
+            });
+        
+        
+            BreloadWallBtn.addEventListener("click", BreloadWall);
+            
+            function BreloadWall(){
+                console.log(userSearched);
+                var Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
+                let messages = serverstub.getUserMessagesByEmail(Token, userSearched);
+            
+                BmessageWall.innerHTML = "";
+                
+                messages.data.forEach(function(message) {
+                    
+                  const messageDiv = document.createElement("div");
+                  messageDiv.classList.add("message");
+            
+                  const avatarImg = document.createElement("img");
+                  avatarImg.src = "https://randomuser.me/api/portraits/lego/"+hashfunc(message.writer) +".jpg";
+                  avatarImg.alt = "User Avatar";
+                  messageDiv.appendChild(avatarImg);
+            
+                  const textDiv = document.createElement("div");
+                  textDiv.classList.add("textMessage");
+            
+                  const writerP = document.createElement("h3");
+                  writerP.textContent = message.writer;
+                  textDiv.appendChild(writerP);
+            
+                  const messageP = document.createElement("p");
+                  messageP.textContent = message.content;
+                  textDiv.appendChild(messageP);
+            
+            
+                  messageDiv.appendChild(textDiv);
+            
+                  BmessageWall.appendChild(messageDiv);
+        
+                });
+            };
+        }catch(e){};
+            
+    } 
+}

@@ -25,6 +25,11 @@ body{
     align-items: center;
 }
 
+div.body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 
 #logo{
@@ -60,7 +65,7 @@ body{
 }
 
 #signin{
-    display: flex;
+    // display: flex;
     border: 2px solid black;
     align-items: center;
     /* height: 14.5vh; */
@@ -69,6 +74,14 @@ body{
     background-color: aliceblue;
     overflow: auto;
     margin-bottom: 10px;
+    h3{
+        margin-left: 5px;
+        margin-top: 1.5rem;
+    }
+}
+
+h3.signin_fail_message{
+    float: left;
 }
 
 button{
@@ -170,7 +183,7 @@ header.tabcard nav ul li:hover{
 // }
 
 section.homepage{
-    display: block;
+    display: none;
 }
 
 section.browsepage{

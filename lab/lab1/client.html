@@ -8,83 +8,83 @@
     <link rel="stylesheet" href="client.css">
     <script src="client.js" type="text/javascript" defer></script>
     <script src="serverstub.js" type="text/javascript" defer></script>
-    <script type="text/view" id="welcomeview">
-        <div id="welcomepage">
-            <div class="body">
-                <!--body of the welcome page-->
-                <img src="wimage.png" alt="logo" id="logo">
-                <div class="sign" id="sign">
-                <div class="signin" id="signin">
-                    <form action="" id="signinform">
-                        <div class="block">
-                            <label for="email">Email:</label>
-                            <input type="email" id="email_signin" name="email" 
-                            placeholder="Please enter your email"
-                            required> 
-                        </div>
-                        <div class="block">
-                            <label for="">Password:</label>
-                            <input type="password" id="psw_signin" name="psw" required>
-                        </div>
-                        <button type="submit" class="signin">login</button>
-                    </form>
-        
-                </div>
-                <div id="signup" class="signup">
-                    <br>
-                    <form action="" id="signupform">
-                        <h1>Sign up here</h1>
-                        <div class="block">
-                            <label for="">First name:</label>
-                            <input type="text" id="first_name" name="first_name" required>
-                        </div>
-                        <div class="block">
-                            <label for="">Family name:</label>
-                            <input type="text" id="fam_name" name="fam_name" required>
-                        </div>
-                        <div class="block">
-                            <label for="gender">Gender:</label>
-                            <select name="gender" id="gender" required>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                                <option value="other">Non binary</option>
-                                <option value="non">Prefer not to say</option>
-                            </select>
-                        </div>
-                        <div class="block">
-                            <label for="city">City:</label>
-                            <input type="text" id="city" name="city" required>
-                        </div>
-                        <div class="block">
-                            <label for="country">Country:</label>
-                            <input type="text" id="country" name="country" required>
-                        </div>
-                        <div class="block">
-                            <label for="email">Email:</label>
-                            <input type="email" id="email" name="email" required>
-                        </div>
-                        <div class="block">
-                            <label for="psw">Password:</label>
-                            <input type="password" id="psw" name="psw" minlength="8" maxlength="18" 
-                            required>
-                        </div>
-                        <div class="block">
-                            <label for="repsw">Confirm PSW:</label>
-                            <input type="password"  id="repsw" name="repsw" minlength="8" maxlength="18" 
-                            oninput="confirm_psw(this)"
-                            required> 
-                        </div>
-                        <button type="submit" class="signup"
-                        onclick="sendData()">sign up</button>
-                    </form>
-                    
-                </div>
-            </div>
-            </div>
-        </div>
-    </script>
 </head>
 <body>
+    <div id="welcomepage">
+        <div class="body">
+            <!--body of the welcome page-->
+            <img src="wimage.png" alt="logo" id="logo">
+            <div class="sign" id="sign">
+            <div class="signin" id="signin">
+                <form action="" id="signinform" target="iframe">
+                    <div class="block">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email_signin" name="email" 
+                        placeholder="Please enter your email"
+                        required> 
+                    </div>
+                    <div class="block">
+                        <label for="">Password:</label>
+                        <input type="password" id="psw_signin" name="psw" required>
+                    </div>
+                    <button type="submit" class="signin">login</button>
+                </form>
+                <iframe id="iframe" name="iframe" style="display: none;"></iframe>
+    
+            </div>
+            <div id="signup" class="signup">
+                <br>
+                <form action="" id="signupform" target="iframe">
+                    <h1>Sign up here</h1>
+                    <div class="block">
+                        <label for="">First name:</label>
+                        <input type="text" id="first_name" name="first_name" required>
+                    </div>
+                    <div class="block">
+                        <label for="">Family name:</label>
+                        <input type="text" id="fam_name" name="fam_name" required>
+                    </div>
+                    <div class="block">
+                        <label for="gender">Gender:</label>
+                        <select name="gender" id="gender" required>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Non binary</option>
+                            <option value="non">Prefer not to say</option>
+                        </select>
+                    </div>
+                    <div class="block">
+                        <label for="city">City:</label>
+                        <input type="text" id="city" name="city" required>
+                    </div>
+                    <div class="block">
+                        <label for="country">Country:</label>
+                        <input type="text" id="country" name="country" required>
+                    </div>
+                    <div class="block">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="block">
+                        <label for="psw">Password:</label>
+                        <input type="password" id="psw" name="psw" minlength="8" maxlength="18" 
+                        required>
+                    </div>
+                    <div class="block">
+                        <label for="repsw">Confirm PSW:</label>
+                        <input type="password"  id="repsw" name="repsw" minlength="8" maxlength="18" 
+                        oninput="confirm_psw(this)"
+                        required> 
+                    </div>
+                    <button type="submit" class="signup"
+                    onclick="sendData()">sign up</button>
+                </form>
+                <iframe id="iframe" name="iframe" style="display: none;"></iframe>
+            </div>
+        </div>
+        </div>
+    </div>
+    <div id="profilepage">
     <header class="tabcard">
         <div class="logo"><img src="./logo.png" alt="logo" class="logo">
         <h1><a href="#">Twidder</a></h1></div>
@@ -115,7 +115,7 @@
                     </div>
                     <div id="postMessage">
                       <textarea id="messageText" placeholder="Message..."></textarea>
-                      <input type="email" id="email" placeholder="User Email">
+                      <input type="email" id="postemail" placeholder="User Email">
                       <button id="postBtn">Post</button>
                     </div>
                 </div>
@@ -220,10 +220,7 @@
                 <h3 class="signout">Signout</h3>
             </div>
         </div>
-
-
-
-
     </section>
+</div>
 </body>
 </html>
