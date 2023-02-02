@@ -146,51 +146,8 @@ let homePage=document.querySelector("section.homepage");
 let browsePage=document.querySelector("section.browsepage");
 let accountPage=document.querySelector("section.accountpage");
 
-// Refresh the web page without changing tabs
-// let tabLiNum=sessionStorage.getItem("tabLiNum");
-// if(tabLiNum===null){}else if(tabLiNum==="home"){
-// }else if(tabLiNum==="browse"){
-//     browsePage.style.display="block";
-//     accountPage.style.display="none";
-//     homePage.style.display="none";
-// }else if(tabLiNum==="account"){
-//     browsePage.style.display="none";
-//     accountPage.style.display="block";
-//     homePage.style.display="none";
-// }
-
-// homeButton.addEventListener("click",()=>{
-//     browsePage.style.display="none";
-//     accountPage.style.display="none";
-//     homePage.style.display="block";
-//     sessionStorage.setItem("tabLiNum","home");
-// });
-
-// logoButton.addEventListener("click",()=>{
-//     browsePage.style.display="none";
-//     accountPage.style.display="none";
-//     homePage.style.display="block";
-//     sessionStorage.setItem("tabLiNum","home");
-// });
-
-// browseButton.addEventListener("click",()=>{
-//     browsePage.style.display="block";
-//     accountPage.style.display="none";
-//     homePage.style.display="none";
-//     sessionStorage.setItem("tabLiNum","browse");
-// });
-
-// accountButton.addEventListener("click",()=>{
-//     browsePage.style.display="none";
-//     accountPage.style.display="block";
-//     homePage.style.display="none";
-//     sessionStorage.setItem("tabLiNum","account");
-// });
-
 
 // Step 7
-
-
 let changepswButton=document.querySelector("div.changepsw");
 
 try{
