@@ -121,7 +121,7 @@ try{
             let signin_fail_message=document.createElement("h3");
             signin_fail_message.innerHTML=signinData.message;
             signin_fail_message.className="signin_fail_message";
-            signin_fail_message.style.fontSize="0.5px";
+            signin_fail_message.style.fontSize="10px";
             document.querySelector("#signin").appendChild(signin_fail_message);
 
         }
