@@ -73,11 +73,9 @@
                     <div class="block">
                         <label for="repsw">Confirm PSW:</label>
                         <input type="password"  id="repsw" name="repsw" minlength="8" maxlength="18" 
-                        oninput="confirm_psw(this)"
                         required> 
                     </div>
-                    <button type="submit" class="signup"
-                    onclick="sendData()">sign up</button>
+                    <button type="submit" class="signup" onclick="confirm_psw()">sign up</button>
                 </form>
                 <iframe id="iframe" name="iframe" style="display: none;"></iframe>
             </div>
@@ -209,10 +207,9 @@
                     placeholder="New password" required>
                     <input type="password" class="" id="newpswconfirm" name="newpswconfirm" 
                     minlength="8" maxlength="18" 
-                    placeholder="Confirm new password" 
-                    oninput="confirm_change_psw(this)" required>
+                    placeholder="Confirm new password"  required>
                     <div class="hdd"></div>
-                    <button type="submit" class="changebutton">Submit</button>
+                    <button type="submit" class="changebutton" onclick="confirm_change_psw()">Submit</button>
                 </form>
                 <iframe id="iframe" name="iframe" style="display: none;"></iframe>
             </div>

@@ -22,14 +22,15 @@ if((loggedinusers==null)||(Object.keys(loggedinusers).length===2)){
 }
 
 // Step 3:Confirm password
-function confirm_psw(repsw){
-    let psw=document.getElementById("psw");
+function confirm_psw(){
+    var psw=document.getElementById("psw");
+    var repsw=document.getElementById("repsw");
     if(psw.value!==repsw.value){
         psw.setCustomValidity("Password Must be Match.");
-       
+        return ;
     }else{
         psw.setCustomValidity("");
-        
+        return ;
     }
 }
 
@@ -234,9 +235,10 @@ try{
 
 // Step 7:Change password
 
-function confirm_change_psw(repsw){
+function confirm_change_psw(){
     let changepswform=document.querySelector("#changeform");
     let newpsw=changepswform[1];
+    let repsw=changepswform[2];
     if(newpsw.value!==repsw.value){
         newpsw.setCustomValidity("Password Must be Match.");
     }else{
