@@ -6,6 +6,7 @@ const mongoose=require("mongoose");
 const bodyParser=require("body-parser");
 const cookieParser=require("cookie-parser");
 const User=require("./models/user");
+const Post=require("./models/post");
 const bcrypt=require("bcrypt");//encrypt the password
 const saltRounds=10;    //cost factor，数字越大，加密所花时间越久
 const jwt = require('jsonwebtoken');
@@ -33,6 +34,7 @@ mongoose.connect(process.env.MONGO_URI,{
 });
 
 
+// 
 app.get("/",(req,res)=>{
     res.render("client.ejs");
 });
@@ -59,7 +61,8 @@ app.post("/signup",async (req,res)=>{
 
             if(newUser.password.length<8){
                 res.status(400).send({"success": false, "message": "The min length of the password should be 8."});
-            }else{
+            }
+            else{
                 await newUser.save().then(meg=>{
                     res.status(200).send({"success": true, "message": "Successfully created a new user."});
                 }).catch(err=>{
@@ -117,13 +120,13 @@ app.post("/login",async (req,res)=>{
 
 //signout function
 app.post("/signout",(req,res)=>{
-    //总是使用header递送token，前端中使用cookie或者localStorage向ajax的heade中传递token，
-    //当登出时注销localStorage或者cookies中的token
+    //Always use the header to deliver the token, use cookie or localStorage in the front end to pass the token to the ajax header,
+     //When logging out, remove the token in localStorage or cookies
     let token=req.headers.authorization;
-    if(token!==undefined){
+    if(token!==null){
         // after response,the front-end should remove the token from the localStorage
         res.clearCookie('token');
-        res.status(204).send({"success": true, "message": "Successfully signed out."});
+        res.status(200).send({"success": true, "message": "Successfully signed out."});
     }else{
         res.status(403).send({"success": false, "message": "You are not signed in."});
     }
@@ -133,7 +136,7 @@ app.post("/signout",(req,res)=>{
 //change password
 app.put("/changepsw",async (req,res)=>{
     let token=req.headers.authorization;
-    if(token!==undefined){
+    if(token!==null){
         let data=await get_user_data_by_token(req.headers.authorization);
         let {first_name,family_name,gender,city,country,email,password,token}=data.data;
         if(data.success==true){
@@ -185,17 +188,21 @@ async function get_user_data_by_email(token,email){
     }
 }
 
+app.get("/sdsdf",(req,res)=>[
+    
+])
+
 
 //get user data by token
 async function get_user_data_by_token(token){
-    if(token===undefined){
+    if(token===null){
         return {"success": false, "message": "You are not signed in."};
     }else{
         try{
             let decoded=jwt.verify(token,process.env.SECRET_KEY);
-            console.log(decoded);
+            // console.log(decoded);
             foundUser =await User.findOne({email:decoded.email});
-            console.log(foundUser);
+            // console.log(foundUser);
         }catch(err){
             console.log(err);
         }
@@ -206,6 +213,10 @@ async function get_user_data_by_token(token){
         }
     }
 }
+
+
+// get user data by email
+
 
 
 // validate the received token

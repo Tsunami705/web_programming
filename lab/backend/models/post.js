@@ -1,38 +1,25 @@
 const mongoose=require("mongoose");
 
-const userSchema=new mongoose.Schema({
-    first_name:{
+const postSchema=new mongoose.Schema({
+    text:{
         type:String,
         required:true,
         minLength:1
     },
-    family_name:{
+    receiver:{
         type:String,
         required:true,
         minLength:1
     },
-    gender:{
+    poster:{
         type:String,
         required:true
     },
-    city:{
-        type:String,
-        required:true
-    },
-    country:{
-        type:String,
-        required:true
-    },
-    email:{
-        type:String,
-        required:true
-    },
-    password:{
-        type:String,
-        required:true
+    post_time:{
+        type:Date,
     }
 });
 
-const User=mongoose.model("User",userSchema);
+const Post=mongoose.model("Post",postSchema);
 
-module.exports=User;
+module.exports=Post;
