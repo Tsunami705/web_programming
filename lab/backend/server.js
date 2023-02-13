@@ -134,6 +134,7 @@ app.post("/post", async (req, res) => {
     }
 });
 
+//Server method
 async function post_message() {
     let newPost = new Post({
         text: this.text,
