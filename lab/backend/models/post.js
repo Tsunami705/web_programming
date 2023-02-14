@@ -14,9 +14,6 @@ const postSchema=new mongoose.Schema({
     poster:{
         type:String,
         required:true
-    },
-    post_time:{
-        type:Date,
     }
 });
 
