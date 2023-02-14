@@ -24,98 +24,98 @@ app.use(cookieParser("thisismysecret."));//内部的str会被用于制作signed 
 
 //connect to mongoDB,We use Cloud platform to store data,so don't need to store data in the file
 mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 }).then(() => {
-    console.log("Successfully connected to mongoDB.");
+  console.log("Successfully connected to mongoDB.");
 }).catch((e) => {
-    console.log("Connection failed.");
-    console.log(e);
+  console.log("Connection failed.");
+  console.log(e);
 });
 
 
 // 
 app.get("/", (req, res) => {
-    res.render("client.ejs");
+  res.render("client.ejs");
 });
 
 //signup function
 //params:{ first_name, fam_name, gender, city, country, email, psw } -> req.body
 app.post("/signup", async (req, res) => {
-    try {
-        let { first_name, fam_name, gender, city, country, email, psw } = req.body;
-        if (await User.findOne({ email: email })) {
-            res.status(409).send({ "success": false, "message": "User already exists." });
-        } else {
-            let salt = await bcrypt.genSalt(saltRounds);
-            let hashpassword = await bcrypt.hash(psw, salt);
+  try {
+    let { first_name, fam_name, gender, city, country, email, psw } = req.body;
+    if (await User.findOne({ email: email })) {
+      res.status(409).send({ "success": false, "message": "User already exists." });
+    } else {
+      let salt = await bcrypt.genSalt(saltRounds);
+      let hashpassword = await bcrypt.hash(psw, salt);
 
-            let newUser = new User({
-                first_name: first_name,
-                family_name: fam_name,
-                gender: gender,
-                city: city,
-                country: country,
-                email: email,
-                password: hashpassword,
-            });
+      let newUser = new User({
+        first_name: first_name,
+        family_name: fam_name,
+        gender: gender,
+        city: city,
+        country: country,
+        email: email,
+        password: hashpassword,
+      });
 
-            if (psw.length < 8) {
-                res.status(400).send({ "success": false, "message": "The min length of the password should be 8." });
-            }
-            else {
-                await newUser.save().then(meg => {
-                    res.status(200).send({ "success": true, "message": "Successfully created a new user." });
-                }).catch(err => {
-                    res.status(400).send({ "success": false, "message": "Form data missing or incorrect type." });
-                });
-            }
-        }
-    } catch (err) {
-        res.status(400);
-        console.log(err);
+      if (psw.length < 8) {
+        res.status(400).send({ "success": false, "message": "The min length of the password should be 8." });
+      }
+      else {
+        await newUser.save().then(meg => {
+          res.status(200).send({ "success": true, "message": "Successfully created a new user." });
+        }).catch(err => {
+          res.status(400).send({ "success": false, "message": "Form data missing or incorrect type." });
+        });
+      }
     }
+  } catch (err) {
+    res.status(400);
+    console.log(err);
+  }
 });
 
 
 //login function
 ////params : { email,psw } -> req.body
 app.post("/login", async (req, res) => {
-    try {
-        let { email, psw } = req.body;
-        let foundUser = await User.findOne({ email: email });
-        if (!foundUser) {
-            res.status(400).send({ "success": false, "message": "Wrong username or password." });
-        } else {
-            bcrypt.compare(psw, foundUser.password, (err, result) => {
-                if (err) {
-                    res.status(400);
-                    console.log(err);
-                }
-                if (result == true) {
-
-                    // Create token(Storing in the localStorage)
-                    const token = jwt.sign(
-                        { user_id: foundUser._id, email },
-                        process.env.SECRET_KEY, {
-                        expiresIn: process.env.JWT_EXPIRE,
-                    }
-                    );
-                    // res.cookie("token", token, { signed: false });
-                    // res.header('Authorization', [token]);
-
-
-                    // after response,the front-end should add the token to the localStorage
-                    res.status(200).send({ "success": true, "message": "Successfully signed in.", "data": token });
-                } else {
-                    res.status(400).send({ "success": false, "message": "Wrong username or password." });
-                }
-            });
+  try {
+    let { email, psw } = req.body;
+    let foundUser = await User.findOne({ email: email });
+    if (!foundUser) {
+      res.status(400).send({ "success": false, "message": "Wrong username or password." });
+    } else {
+      bcrypt.compare(psw, foundUser.password, (err, result) => {
+        if (err) {
+          res.status(400);
+          console.log(err);
         }
-    } catch (err) {
-        res.status(400);
-        console.log(err);
+        if (result == true) {
+
+          // Create token(Storing in the localStorage)
+          const token = jwt.sign(
+            { user_id: foundUser._id, email },
+            process.env.SECRET_KEY, {
+            expiresIn: process.env.JWT_EXPIRE,
+          }
+          );
+          // res.cookie("token", token, { signed: false });
+          // res.header('Authorization', [token]);
+
+
+          // after response,the front-end should add the token to the localStorage
+          res.status(200).send({ "success": true, "message": "Successfully signed in.", "data": token });
+        } else {
+          res.status(400).send({ "success": false, "message": "Wrong username or password." });
+        }
+      });
     }
+  } catch (err) {
+    res.status(400);
+    console.log(err);
+  }
 
 });
 
@@ -123,61 +123,60 @@ app.post("/login", async (req, res) => {
 //params : { text, receiver, poster} -> req.body
 //params : { token,email } -> header
 app.post("/post", async (req, res) => {
-    let token = req.headers.authorization;
-    let email = req.headers.email;
-    if (token !== undefined) {
-        try {
-            if(! await validate_token(token,email)){
-                res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
-                return ;
-            };
-            let { text, receiver, poster} = req.body;
-            if (text.length == 0) {
-                res.status(400).send({ "success": false, "message": "Empty Message" });
-            } else if (!await User.findOne({ email: receiver })) {
-                res.status(400).send({ "success": false, "message": "No receiver for message" });
-            } else {
-                post_message(text, receiver, poster);
-                res.status(200).send({ "success": true, "message": "Post successfully." });
-            }
-        } catch (e) {
-            console.log(e);
-            res.status(400).send({ "success": false, "message": "post message error" });
+  let token = req.headers.authorization;
+  let email = req.headers.email;
+  if (token !== undefined) {
+    try {
+      if (! await validate_token(token, email)) {
+        res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+      } else {
+        let { text, receiver, poster } = req.body;
+        if (text.length == 0) {
+          res.status(400).send({ "success": false, "message": "Empty Message" });
+        } else if (!await User.findOne({ email: receiver })) {
+          res.status(400).send({ "success": false, "message": "No receiver for message" });
+        } else {
+          post_message(text, receiver, poster);
+          res.status(200).send({ "success": true, "message": "Post successfully." });
         }
-    }else{
-        res.status(400).send({ "success": false, "message": "You are not signed in." });
+      }
+    } catch (e) {
+      console.log(e);
+      res.status(400).send({ "success": false, "message": "post message error" });
     }
+  } else {
+    res.status(400).send({ "success": false, "message": "You are not signed in." });
+  }
 });
 
 //Server method
 async function post_message(text, receiver, poster) {
-    let newPost = new Post({
-        text: text,
-        receiver: receiver,
-        poster: poster,
-    });
-    await newPost.save();
+  let newPost = new Post({
+    text: text,
+    receiver: receiver,
+    poster: poster,
+  });
+  await newPost.save();
 }
 
 
 //signout function
 //params : { token,email } -> header
 app.post("/signout", async (req, res) => {
-    //Always use the header to deliver the token, use cookie or localStorage in the front end to pass the token to the ajax header,
-    //When logging out, remove the token in localStorage or cookies
-    let token = req.headers.authorization;
-    let email = req.headers.email;
-    if (token !== undefined) {
-        if(! await validate_token(token,email)){
-            res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
-            return ;
-        }
-        // after response,the front-end should remove the token from the localStorage
-        // res.clearCookie('token');
-        res.status(200).send({ "success": true, "message": "Signout successfully." });
-    } else {
-        res.status(403).send({ "success": false, "message": "You are not signed in." });
-    }
+  //Always use the header to deliver the token, use cookie or localStorage in the front end to pass the token to the ajax header,
+  //When logging out, remove the token in localStorage or cookies
+  let token = req.headers.authorization;
+  let email = req.headers.email;
+  if (token !== undefined) {
+    if (! await validate_token(token, email)) {
+      res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+    } else
+      // after response,the front-end should remove the token from the localStorage
+      // res.clearCookie('token');
+      res.status(200).send({ "success": true, "message": "Signout successfully." });
+  } else {
+    res.status(403).send({ "success": false, "message": "You are not signed in." });
+  }
 })
 
 
@@ -185,52 +184,52 @@ app.post("/signout", async (req, res) => {
 // params:{oldpsw, newpsw}->req.body
 //params : { token,email } -> header
 app.put("/changepsw", async (req, res) => {
-    let token = req.headers.authorization;
-    if (token !== undefined) {
-        let ver_email = req.headers.email;
-        if(! await validate_token(req.headers.authorization,ver_email)){
-            res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
-            return ;
-        }
-        let data = await get_user_data_by_token(req.headers.authorization);
-        let { first_name, family_name, gender, city, country, email, password, token } = data.data;
-        if (data.success == true) {
-            let { oldpsw, newpsw } = req.body;
-            if(newpsw.length<8){
-                res.status(400).send({ "success": false, "message": "New password is shorter than 8." });
-                // res.end();
-            }
-            bcrypt.compare(oldpsw, data.data.password, async (err, result) => {
-                if (err) {
-                    res.status(400);
-                    console.log(err);
-                }
-                if (result == true) {
-                    try {
-                        let salt = await bcrypt.genSalt(saltRounds);
-                        let hashnewpassword = await bcrypt.hash(newpsw, salt);
-                        let foundUser = await User.findOneAndUpdate({ email: email }, { first_name, family_name, gender, city, country, email, password: hashnewpassword },
-                            {
-                                new: true,
-                                runValidators: true,
-                                overwrite: true
-                            });
-                        res.clearCookie('token');
-                        res.status(200).send({ "success": true, "message": "Password changed." });
-                    } catch (err) {
-                        res.status(400);
-                        console.log(err);
-                    }
-                } else {
-                    res.status(403).send({ "success": false, "message": "Wrong password." });
-                }
-            })
-        } else {
-            res.status(403).send({ "success": false, "message": "You are not logged in." });
-        }
-    } else {
-        res.status(403).send({ "success": false, "message": "You are not logged in." });
+  let token = req.headers.authorization;
+  if (token !== undefined) {
+    let ver_email = req.headers.email;
+    if (! await validate_token(req.headers.authorization, ver_email)) {
+      res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+      return;
     }
+    let data = await get_user_data_by_token(req.headers.authorization);
+    let { first_name, family_name, gender, city, country, email, password, token } = data.data;
+    if (data.success == true) {
+      let { oldpsw, newpsw } = req.body;
+      if (newpsw.length < 8) {
+        res.status(400).send({ "success": false, "message": "New password is shorter than 8." });
+        // res.end();
+      }
+      bcrypt.compare(oldpsw, data.data.password, async (err, result) => {
+        if (err) {
+          res.status(400);
+          console.log(err);
+        }
+        if (result == true) {
+          try {
+            let salt = await bcrypt.genSalt(saltRounds);
+            let hashnewpassword = await bcrypt.hash(newpsw, salt);
+            let foundUser = await User.findOneAndUpdate({ email: email }, { first_name, family_name, gender, city, country, email, password: hashnewpassword },
+              {
+                new: true,
+                runValidators: true,
+                overwrite: true
+              });
+            res.clearCookie('token');
+            res.status(200).send({ "success": true, "message": "Password changed." });
+          } catch (err) {
+            res.status(400);
+            console.log(err);
+          }
+        } else {
+          res.status(403).send({ "success": false, "message": "Wrong password." });
+        }
+      })
+    } else {
+      res.status(403).send({ "success": false, "message": "You are not logged in." });
+    }
+  } else {
+    res.status(403).send({ "success": false, "message": "You are not logged in." });
+  }
 });
 
 
@@ -238,42 +237,42 @@ app.put("/changepsw", async (req, res) => {
 //get user data by email
 //Retrieves the stored data for the user specified by the passed email address
 async function get_user_data_by_email(token, email) {
-    if (token === undefined) {
-        return { "success": false, "message": "You are not signed in." };
+  if (token === undefined) {
+    return { "success": false, "message": "You are not signed in." };
+  } else {
+    let foundUser = await User.findOne({ email: email });
+    if (!foundUser) {
+      return { "success": false, "message": "No such user." };
     } else {
-        let foundUser = await User.findOne({ email: email });
-        if (!foundUser) {
-            return { "success": false, "message": "No such user." };
-        } else {
-            return { "success": true, "message": "User data retrieved.", "data": foundUser };
-        }
+      return { "success": true, "message": "User data retrieved.", "data": foundUser };
     }
+  }
 };
 // API
 //params : { email } -> req.query
 //params : { token,email } -> header
-app.get("/getdatabyemail",async (req,res)=>{
-    let token = req.headers.authorization;
-    let ver_email = req.headers.email;
-    if(token===undefined){
-        res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired1112." });
-    }else{
-        if(! await validate_token(token,ver_email)){
-            res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
-            return ;
+app.get("/getdatabyemail", async (req, res) => {
+  let token = req.headers.authorization;
+  let ver_email = req.headers.email;
+  if (token === undefined) {
+    res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired1112." });
+  } else {
+    if (! await validate_token(token, ver_email)) {
+      res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+    } else {
+      let { email } = req.query;
+      let result = await get_user_data_by_email(token, email);
+      try {
+        if (result.success == true) {
+          res.status(200).send(result);
+        } else {
+          res.status(400).send(result);
         }
-        let {email}=req.query;
-        let result= await get_user_data_by_email(token, email);
-        try{
-            if(result.success==true){
-                res.status(200).send(result);
-            }else{
-                res.status(400).send(result); 
-            }
-        }catch(e){
-            console.log(e);
-        }
+      } catch (e) {
+        console.log(e);
+      }
     }
+  }
 });
 
 
@@ -282,42 +281,42 @@ app.get("/getdatabyemail",async (req,res)=>{
 
 //get user message by email 
 async function get_user_message_by_email(token, email) {
-    if (token == undefined) {
-        return { "success": false, "message": "Not signed in" };
-    }
+  if (token == undefined) {
+    return { "success": false, "message": "Not signed in" };
+  }
 
-    let foundPost = await Post.find({ receiver: email })
-    if (foundPost.length==0) {
-        return { "success": false, "message": "No such user." };
-    }
+  let foundPost = await Post.find({ receiver: email })
+  if (foundPost.length == 0) {
+    return { "success": false, "message": "No such user." };
+  }
 
-    return { "success": true, "message": "User data retrieved.", "post": foundPost };
+  return { "success": true, "message": "User data retrieved.", "post": foundPost };
 }
 //API
 //params : { email } -> req.query
 //params : { token,email } -> header
-app.get("/getmessagebyemail",async (req,res)=>{
-    let token = req.headers.authorization;
-    let ver_email = req.headers.email;
-    if(token===undefined){
-        res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
-    }else{
-        if(! await validate_token(token,ver_email)){
-            res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
-            return ;
+app.get("/getmessagebyemail", async (req, res) => {
+  let token = req.headers.authorization;
+  let ver_email = req.headers.email;
+  if (token === undefined) {
+    res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+  } else {
+    if (! await validate_token(token, ver_email)) {
+      res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+    } else {
+      let { email } = req.query;
+      let result = await get_user_message_by_email(token, email);
+      try {
+        if (result.success == true) {
+          res.status(200).send(result);
+        } else {
+          res.status(400).send(result);
         }
-        let {email}=req.query;
-        let result= await get_user_message_by_email(token, email);
-        try{
-            if(result.success==true){
-                res.status(200).send(result);
-            }else{
-                res.status(400).send(result); 
-            }
-        }catch(e){
-            console.log(e);
-        }
+      } catch (e) {
+        console.log(e);
+      }
     }
+  }
 });
 
 
@@ -326,87 +325,87 @@ app.get("/getmessagebyemail",async (req,res)=>{
 //get user data by token
 //return the data for the user whom the passed token is issued for
 async function get_user_data_by_token(token) {
-    if (token === undefined) {
-        return { "success": false, "message": "You are not signed in." };
-    } else {
-        try {
-            let decoded = jwt.verify(token, process.env.SECRET_KEY);
-            // console.log(decoded);
-            foundUser = await User.findOne({ email: decoded.email });
-            // console.log(foundUser);
-        } catch (err) {
-            console.log(err);
-        }
-        if (!foundUser) {
-            return { "success": false, "message": "You are not signed in." };
-        } else {
-            return get_user_data_by_email(token, foundUser.email);
-        }
+  if (token === undefined) {
+    return { "success": false, "message": "You are not signed in." };
+  } else {
+    try {
+      let decoded = jwt.verify(token, process.env.SECRET_KEY);
+      // console.log(decoded);
+      foundUser = await User.findOne({ email: decoded.email });
+      // console.log(foundUser);
+    } catch (err) {
+      console.log(err);
     }
+    if (!foundUser) {
+      return { "success": false, "message": "You are not signed in." };
+    } else {
+      return get_user_data_by_email(token, foundUser.email);
+    }
+  }
 }
 //API
 //params : { token,email } -> header
-app.get("/getdatabytoken",async (req,res)=>{
-    let token = req.headers.authorization;
-    let ver_email = req.headers.email;
-    if(token===undefined){
-        res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
-    }else{
-        if(! await validate_token(token,ver_email)){
-            res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
-            return ;
+app.get("/getdatabytoken", async (req, res) => {
+  let token = req.headers.authorization;
+  let ver_email = req.headers.email;
+  if (token === undefined) {
+    res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+  } else {
+    if (! await validate_token(token, ver_email)) {
+      res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+    } else {
+      let result = await get_user_data_by_token(token);
+      try {
+        if (result.success == true) {
+          res.status(200).send(result);
+        } else {
+          res.status(400).send(result);
         }
-        let result= await get_user_data_by_token(token);
-        try{
-            if(result.success==true){
-                res.status(200).send(result);
-            }else{
-                res.status(400).send(result); 
-            }
-        }catch(e){
-            console.log(e);
-        }
+      } catch (e) {
+        console.log(e);
+      }
     }
+  }
 });
 
 
 
 //get user message by token
 async function get_user_message_by_token(token) {
-    if (token == undefined) {
-        return { "success": false, "message": "You are not signed in." };
-    }
+  if (token == undefined) {
+    return { "success": false, "message": "You are not signed in." };
+  }
 
-    try {
-        let decoded = jwt.verify(token, process.env.SECRET_KEY);
-        return get_user_message_by_email(token, decoded.email);
-    } catch (e) {
-        return { "success": false, "message": "Wrong token or expired" };
-    }
+  try {
+    let decoded = jwt.verify(token, process.env.SECRET_KEY);
+    return get_user_message_by_email(token, decoded.email);
+  } catch (e) {
+    return { "success": false, "message": "Wrong token or expired" };
+  }
 };
 //API
 //params : { token,email } -> header
-app.get("/getmessagebytoken",async (req,res)=>{
-    let token = req.headers.authorization;
-    let ver_email = req.headers.email;
-    if(token===undefined){
-        res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
-    }else{
-        if(! await validate_token(token,ver_email)){
-            res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
-            return ;
+app.get("/getmessagebytoken", async (req, res) => {
+  let token = req.headers.authorization;
+  let ver_email = req.headers.email;
+  if (token === undefined) {
+    res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+  } else {
+    if (! await validate_token(token, ver_email)) {
+      res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+    } else {
+      let result = await get_user_message_by_token(token);
+      try {
+        if (result.success == true) {
+          res.status(200).send(result);
+        } else {
+          res.status(400).send(result);
         }
-        let result= await get_user_message_by_token(token);
-        try{
-            if(result.success==true){
-                res.status(200).send(result);
-            }else{
-                res.status(400).send(result); 
-            }
-        }catch(e){
-            console.log(e);
-        }
+      } catch (e) {
+        console.log(e);
+      }
     }
+  }
 })
 
 
@@ -416,32 +415,32 @@ app.get("/getmessagebytoken",async (req,res)=>{
 //every time we send a http requests needed token,we should send the email inside the header too,and compare them
 //If verify failed ,it should return false.
 //email should also store in the localStorage when successfully signed in.
-async function validate_token(token,email) {
-    // if (token === undefined) {
-    //     return false;
-    // }
-    try {
-        let decoded =jwt.verify(token, process.env.SECRET_KEY);
-        console.log(decoded);
-        if (decoded.email==email){
-            return true;
-        }else{
-            return false;
-        }
-    } catch (e) {
-        console.log(e);
-        return false;
+async function validate_token(token, email) {
+  // if (token === undefined) {
+  //     return false;
+  // }
+  try {
+    let decoded = jwt.verify(token, process.env.SECRET_KEY);
+    console.log(decoded);
+    if (decoded.email == email) {
+      return true;
+    } else {
+      return false;
     }
+  } catch (e) {
+    console.log(e);
+    return false;
+  }
 
 }
 
 
 app.get("/*", (req, res) => {
-    res.status(300).redirect("/");
+  res.status(300).redirect("/");
 })
 
 app.listen(3000, () => {
-    console.log("Server is running on port 3000");
+  console.log("Server is running on port 3000");
 });
 
 
