@@ -51,14 +51,14 @@ app.post("/signup", async (req, res) => {
     let keys = Object.keys(req.body);
 
     if (keys.length != 7) {
-        res.status(404).send({ "success": false, "message": "Unexpected arguments" });
+        res.status(406).send({ "success": false, "message": "Unexpected arguments" });
         return;
     }
 
     keys.forEach(key => {
         if (key != "email" && key != "psw" && key != "first_name" && key != "fam_name" && key != "gender" && key != "city" && key != "country") {
             console.log(key);
-            res.status(404).send({ "success": false, "message": "Wrong arguments" });
+            res.status(406).send({ "success": false, "message": "Wrong arguments" });
             return;
         }
     });
@@ -92,12 +92,12 @@ app.post("/signup", async (req, res) => {
                 await newUser.save().then(meg => {
                     res.status(200).send({ "success": true, "message": "Successfully created a new user." });
                 }).catch(err => {
-                    res.status(400).send({ "success": false, "message": "Form data missing or incorrect type." });
+                    res.status(500).send({ "success": false, "message": "Form data missing or incorrect type." });
                 });
             }
         }
     } catch (err) {
-        res.status(400);
+        res.status(500);
         console.log(err);
     }
 });
@@ -118,14 +118,14 @@ app.post("/login", async (req, res) => {
 
         if (keys.length != 2) {
 
-            res.status(404).send({ "success": false, "message": "Unexpected arguments" });
+            res.status(406).send({ "success": false, "message": "Unexpected arguments" });
             return;
         }
 
         keys.forEach(key => {
             if (key != "email" && key != "psw") {
                 console.log(key);
-                res.status(404).send({ "success": false, "message": "Wrong arguments" });
+                res.status(406).send({ "success": false, "message": "Wrong arguments" });
                 return;
             }
         });
@@ -162,7 +162,7 @@ app.post("/login", async (req, res) => {
             });
         }
     } catch (err) {
-        res.status(400);
+        res.status(500);
         console.log(err);
     }
 
@@ -176,13 +176,13 @@ app.post("/post", async (req, res) => {
     let keys = Object.keys(req.body);
 
     if (keys.length != 3) {
-        res.status(404).send({ "success": false, "message": "Wrong number of arguments" });
+        res.status(406).send({ "success": false, "message": "Wrong number of arguments" });
         return;
     }
 
     keys.forEach(key => {
         if (key != "text" && key != "receiver" && key != "poster") {
-            res.status(404).send({ "success": false, "message": "Wrong arguments" });
+            res.status(406).send({ "success": false, "message": "Wrong arguments" });
             return;
         }
     });
@@ -193,7 +193,7 @@ app.post("/post", async (req, res) => {
     if (token !== undefined) {
         try {
             if (! await validate_token(token, email)) {
-                res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+                res.status(403).send({ "success": false, "message": "You are not signed in,or the token expired." });
                 return;
             };
             let { text, receiver, poster } = req.body;
@@ -211,10 +211,10 @@ app.post("/post", async (req, res) => {
             }
         } catch (e) {
             console.log(e);
-            res.status(400).send({ "success": false, "message": "post message error" });
+            res.status(500).send({ "success": false, "message": "post message error" });
         }
     } else {
-        res.status(400).send({ "success": false, "message": "You are not signed in." });
+        res.status(401).send({ "success": false, "message": "You are not signed in." });
     }
 });
 // Put post in database
@@ -238,7 +238,7 @@ app.post("/signout", async (req, res) => {
     let keys = Object.keys(req.body);
 
     if (keys.length != 0) {
-        res.status(404).send({ "success": false, "message": "Unexpected arguments" });
+        res.status(406).send({ "success": false, "message": "Unexpected arguments" });
         return;
     }
 
@@ -248,14 +248,14 @@ app.post("/signout", async (req, res) => {
     let email = req.headers.email;
     if (token !== undefined) {
         if (! await validate_token(token, email)) {
-            res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+            res.status(403).send({ "success": false, "message": "You are not signed in,or the token expired." });
             return;
         }
         // after response,the front-end should remove the token from the localStorage
         // res.clearCookie('token');
         res.status(200).send({ "success": true, "message": "Signout successfully." });
     } else {
-        res.status(403).send({ "success": false, "message": "You are not signed in." });
+        res.status(401).send({ "success": false, "message": "You are not signed in." });
     }
 })
 
@@ -283,7 +283,7 @@ app.put("/changepsw", async (req, res) => {
     if (token !== undefined) {
         let ver_email = req.headers.email;
         if (! await validate_token(req.headers.authorization, ver_email)) {
-            res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+            res.status(403).send({ "success": false, "message": "You are not signed in,or the token expired." });
             return;
         }
         let data = await get_user_data_by_token(req.headers.authorization);
@@ -296,6 +296,7 @@ app.put("/changepsw", async (req, res) => {
             }
             bcrypt.compare(oldpsw, data.data.password, async (err, result) => {
                 if (err) {
+                    // If oldpsw is empty than the error will occured.
                     res.status(400);
                     console.log(err);
                 }
@@ -310,7 +311,7 @@ app.put("/changepsw", async (req, res) => {
                                 overwrite: true
                             });
                         res.clearCookie('token');
-                        res.status(200).send({ "success": true, "message": "Password changed." });
+                        res.status(201).send({ "success": true, "message": "Password changed." });
                     } catch (err) {
                         res.status(400);
                         console.log(err);
@@ -323,7 +324,7 @@ app.put("/changepsw", async (req, res) => {
             res.status(403).send({ "success": false, "message": "You are not logged in." });
         }
     } else {
-        res.status(403).send({ "success": false, "message": "You are not logged in." });
+        res.status(401).send({ "success": false, "message": "You are not logged in." });
     }
 });
 
@@ -351,22 +352,22 @@ app.get("/getdatabyemail", async (req, res) => {
     let key = Object.keys(req.query);
 
     if (key.length != 1) {
-        res.status(404).send({ "success": false, "message": "Wrong number of arguments" });
+        res.status(406).send({ "success": false, "message": "Wrong number of arguments" });
         return;
     }
 
     if (key != "email") {
-        res.status(404).send({ "success": false, "message": "Wrong arguments" });
+        res.status(406).send({ "success": false, "message": "Wrong arguments" });
         return;
     }
 
     let token = req.headers.authorization;
     let ver_email = req.headers.email;
     if (token === undefined) {
-        res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired1112." });
+        res.status(401).send({ "success": false, "message": "You are not signed in,or the token expired." });
     } else {
         if (! await validate_token(token, ver_email)) {
-            res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+            res.status(403).send({ "success": false, "message": "You are not signed in,or the token expired." });
             return;
         }
         let { email } = req.query;
@@ -408,22 +409,22 @@ app.get("/getmessagebyemail", async (req, res) => {
     let key = Object.keys(req.query);
 
     if (key.length != 1) {
-        res.status(404).send({ "success": false, "message": "Wrong number of arguments" });
+        res.status(406).send({ "success": false, "message": "Wrong number of arguments" });
         return;
     }
 
     if (key != "email") {
-        res.status(404).send({ "success": false, "message": "Wrong arguments" });
+        res.status(406).send({ "success": false, "message": "Wrong arguments" });
         return;
     }
 
     let token = req.headers.authorization;
     let ver_email = req.headers.email;
     if (token === undefined) {
-        res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+        res.status(401).send({ "success": false, "message": "You are not signed in,or the token expired." });
     } else {
         if (! await validate_token(token, ver_email)) {
-            res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+            res.status(403).send({ "success": false, "message": "You are not signed in,or the token expired." });
             return;
         }
         let { email } = req.query;
@@ -472,17 +473,17 @@ app.get("/getdatabytoken", async (req, res) => {
     let key = Object.keys(req.query);
 
     if (key.length != 0) {
-        res.status(404).send({ "success": false, "message": "Wrong number of arguments" });
+        res.status(406).send({ "success": false, "message": "Wrong number of arguments" });
         return;
     }
 
     let token = req.headers.authorization;
     let ver_email = req.headers.email;
     if (token === undefined) {
-        res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+        res.status(401).send({ "success": false, "message": "You are not signed in,or the token expired." });
     } else {
         if (! await validate_token(token, ver_email)) {
-            res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+            res.status(403).send({ "success": false, "message": "You are not signed in,or the token expired." });
             return;
         }
         let result = await get_user_data_by_token(token);
@@ -520,17 +521,17 @@ app.get("/getmessagebytoken", async (req, res) => {
     let key = Object.keys(req.query);
 
     if (key.length != 0) {
-        res.status(404).send({ "success": false, "message": "Wrong number of arguments" });
+        res.status(406).send({ "success": false, "message": "Wrong number of arguments" });
         return;
     }
 
     let token = req.headers.authorization;
     let ver_email = req.headers.email;
     if (token === undefined) {
-        res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+        res.status(401).send({ "success": false, "message": "You are not signed in,or the token expired." });
     } else {
         if (! await validate_token(token, ver_email)) {
-            res.status(400).send({ "success": false, "message": "You are not signed in,or the token expired." });
+            res.status(403).send({ "success": false, "message": "You are not signed in,or the token expired." });
             return;
         }
         let result = await get_user_message_by_token(token);
