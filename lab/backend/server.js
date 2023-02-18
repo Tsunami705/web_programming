@@ -21,6 +21,7 @@ var loggedInUsers;
 
 //middleware
 app.use(express.static("public"));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(methodOverride("_method"));
@@ -115,7 +116,7 @@ app.post("/login", async (req, res) => {
         //Object.keys(req.body).length;
         //console.log(Object.keys(req.body).length);
         let keys = Object.keys(req.body);
-
+        console.log(req.body);
         if (keys.length != 2) {
 
             res.status(404).send({ "success": false, "message": "Unexpected arguments" });

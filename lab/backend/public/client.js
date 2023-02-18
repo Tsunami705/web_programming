@@ -49,6 +49,7 @@ try{
             email:signup[5].value,
             password:signup[6].value
         };
+        console.log(personalData);
 
         // local storage
         var myList=localStorage.getItem("customerData");
@@ -67,17 +68,6 @@ try{
         }
         let signup_data=serverstub.signUp(personalData);
 
-        // //AJAX
-        // let options={
-        //     method:'POST',
-        //     headers:{
-
-        //     },
-        //     body:
-        // }
-
-
-
         let signup_message=document.createElement("h3");
         signup_message.className="signup_message";
         signup_message.innerHTML=signup_data.message;
@@ -95,14 +85,22 @@ try{
     let signin=document.querySelector("#signinform");
     console.log(signin);
 
-    signin.addEventListener("submit",()=>{
+    signin.addEventListener("submit",async()=>{
 
         let loginData={
             username:signin[0].value,
             password:signin[1].value
         };
-        let signinData=serverstub.signIn(loginData.username,loginData.password);
-        console.log(signinData.message);
+
+        let signinData=await serverstub.signIn(loginData.username,loginData.password).then(res=>{
+            localStorage.setItem("loggedinusers",res.data);
+            localStorage.setItem("email",loginData.username);
+            return res;
+        }
+            
+        );
+
+        console.log(signinData);
         //session storage
         // sessionStorage.setItem(JSON.stringify(loginData.username),signinData.data);
         let check_if_signin_message_exist=document.querySelector("h3.signin_fail_message");
@@ -113,7 +111,7 @@ try{
                 check_if_signin_message_exist.remove();
             }
 
-            var Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
+            var Token=localStorage.getItem("loggedinusers");
             // console.log(Token);
             profilepage.style.display="block";
             welcomepage.style.display="none";
@@ -143,7 +141,7 @@ try{
     console.log(error);
 }
 
-let Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
+let Token=localStorage.getItem("loggedinusers");
 
 
 // Step 6:Implementing tabs
@@ -164,7 +162,7 @@ let changepswButton=document.querySelector("div.changepsw");
 
 try{
     window.addEventListener("load",()=>{
-        var Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
+        let Token=localStorage.getItem("loggedinusers");
         if(!Token){
             null;
         }else{
@@ -175,15 +173,23 @@ try{
 }
 
 // Step 7:Signout
+
 try{
     signoutButton=document.querySelector("div.logout");
-    signoutButton.addEventListener("click",()=>{
-        let Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
-        signoutData=serverstub.signOut(Token);
+    signoutButton.addEventListener("click",async ()=>{
+        let Token=localStorage.getItem("loggedinusers");
+        let userEmail=localStorage.getItem("email");
+        signoutData=await serverstub.signOut(Token,userEmail).then(res=>{
+            return res;
+        }).catch(err=>{
+            console.log(err);
+        });
         if(signoutData.success){
             sessionStorage.setItem("tabLiNum","home");
             profilepage.style.display="none";
             welcomepage.style.display="block";
+            localStorage.removeItem("loggedinusers");
+            localStorage.removeItem("email");
         }else{
             let check_if_loggout_information_exist=document.querySelector("h3.fail_message_logout");
             if(!check_if_loggout_information_exist){
@@ -218,17 +224,20 @@ function confirm_change_psw(){
 var i=1;
 try{
     changepswButton.addEventListener("click",()=>{
-        let Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
+        let Token=localStorage.getItem("loggedinusers");
         let changepswView=document.querySelector("div.change");
         if(i%2==1){
             changepswView.style.display="block";
             i++;
             let changepswform=document.querySelector("#changeform");
-            changepswform.addEventListener("submit",()=>{
+            changepswform.addEventListener("submit",async ()=>{
                 let oldpsw=changepswform[0];
                 let newpsw=changepswform[1];
                 let newpswconfirm=changepswform[2];
-                let changepswfun=serverstub.changePassword(Token,oldpsw.value,newpsw.value);
+                let userEmail=localStorage.getItem("email");
+                let changepswfun=await serverstub.changePassword(Token,userEmail,oldpsw.value,newpsw.value).then(res=>{
+                    return res;
+                }).catch(err=>{console.log(err)});
                 let wwww=changepswfun.success
                 let check_if_prompt_exist=document.querySelector("h3.prompt_information");
                 if(!check_if_prompt_exist){
@@ -280,7 +289,7 @@ function hashfunc(String){
     result=result%10;
     return result;
 } 
-function load_profile_page(){
+async function load_profile_page(){
     // Step 7:display your account information
 
 // Refresh the web page without changing tabs
@@ -317,23 +326,28 @@ browseButton.addEventListener("click",()=>{
     sessionStorage.setItem("tabLiNum","browse");
 });
 
-accountButton.addEventListener("click",()=>{
+accountButton.addEventListener("click",async ()=>{
     browsePage.style.display="none";
     accountPage.style.display="block";
     homePage.style.display="none";
     sessionStorage.setItem("tabLiNum","account");
 });
 
-
-    let Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
-    let userdata=serverstub.getUserDataByToken(Token).data;
-    console.log(userdata);
+    let Token=localStorage.getItem("loggedinusers");
+    let userEmail=localStorage.getItem("email");
+    let userdata=await serverstub.getUserDataByToken(Token,userEmail).then(res=>{
+        console.log(res);
+        return res.data;
+    }
+    ).catch(error=>{
+        console.log(error)
+    });
     //email
     let usernameinfo=document.querySelectorAll("div.infobox div.usernameinfo")[1];
     usernameinfo.innerHTML=userdata.email;
     //name
     let nameinfo=document.querySelectorAll("div.infobox div.nameinfo")[1];
-    nameinfo.innerHTML=userdata.firstname+" "+userdata.familyname;
+    nameinfo.innerHTML=userdata.first_name+" "+userdata.family_name;
     //gender
     let genderinfo=document.querySelectorAll("div.infobox div.genderinfo")[1];
     genderinfo.innerHTML=userdata.gender;
@@ -347,7 +361,7 @@ accountButton.addEventListener("click",()=>{
 
     //HOMEPAGE        
     let nameHome=document.querySelectorAll("h1.nameHome")[0];
-    nameHome.innerHTML=userdata.firstname+" "+userdata.familyname;
+    nameHome.innerHTML=userdata.first_name+" "+userdata.family_name;
 
     let userHome=document.querySelectorAll("h3.userHome")[0];
     userHome.innerHTML=userdata.email;
@@ -366,7 +380,7 @@ accountButton.addEventListener("click",()=>{
     reloadWall();
   
     postBtn.addEventListener("click", function() {
-      var Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
+      let Token=localStorage.getItem("loggedinusers");
       const message = messageText.value;
       const recipientEmail = email.value;
 
@@ -386,20 +400,26 @@ accountButton.addEventListener("click",()=>{
     
     reloadWallBtn.addEventListener("click", reloadWall);
   
-    function reloadWall() {
-        var Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
-        let messages = serverstub.getUserMessagesByToken(Token);
-        
+    async function reloadWall() {
+        let Token=localStorage.getItem("loggedinusers");
+        let userEmail=localStorage.getItem("email");
+        let messages = await serverstub.getUserMessagesByToken(Token,userEmail).then(
+            res=>{
+                return res;
+            }
+        ).catch(err=>{
+            console.log(err);
+        });
 
         messageWall.innerHTML = "";
         
-        messages.data.forEach(function(message) {
+        messages.post.reverse().forEach(function(message) {
             
           const messageDiv = document.createElement("div");
           messageDiv.classList.add("message");
 
           const avatarImg = document.createElement("img");
-          avatarImg.src = "https://randomuser.me/api/portraits/lego/"+hashfunc(message.writer) +".jpg";
+          avatarImg.src = "https://randomuser.me/api/portraits/lego/"+hashfunc(message.poster) +".jpg";
           avatarImg.alt = "User Avatar";
           messageDiv.appendChild(avatarImg);
 
@@ -407,11 +427,11 @@ accountButton.addEventListener("click",()=>{
           textDiv.classList.add("textMessage");
     
           const writerP = document.createElement("h3");
-          writerP.textContent = message.writer;
+          writerP.textContent = message.poster;
           textDiv.appendChild(writerP);
 
           const messageP = document.createElement("p");
-          messageP.textContent = message.content;
+          messageP.textContent = message.text;
           textDiv.appendChild(messageP);
 
 
@@ -423,10 +443,15 @@ accountButton.addEventListener("click",()=>{
       try{
         let userSearched=null;
     
-        browseBtn.addEventListener("click", function(){
+        browseBtn.addEventListener("click", async function(){
             let input=document.querySelector("#browseInput");
-            var Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
-            let userData = serverstub.getUserDataByEmail(Token, input.value);
+            let Token=localStorage.getItem("loggedinusers");
+            let userEmail=localStorage.getItem("email");
+            let userData = await serverstub.getUserDataByEmail(Token, userEmail,input.value).then(res=>{
+                return res;
+            }).catch(err=>{
+                console.log(err);
+            });
     
             if(userData.success == false){
                 document.getElementById("browseInput").placeholder = "User not exist!";
@@ -438,7 +463,13 @@ accountButton.addEventListener("click",()=>{
                 browseTab.style.display="block";
     
                 //profile info
-                let userdata=serverstub.getUserDataByEmail(Token, input.value).data;
+                let userdata=await serverstub.getUserDataByEmail(Token,userEmail, input.value).then(
+                    res=>{
+                        return res.data;
+                    }
+                ).catch(err=>{
+                    console.log(err);
+                });
                 console.log(userdata);     
                 
                 let nameBrowse=document.querySelectorAll("h1.nameBrowse")[0];
@@ -463,20 +494,25 @@ accountButton.addEventListener("click",()=>{
     
         BreloadWallBtn.addEventListener("click", BreloadWall);
         
-        function BreloadWall(){
+        async function BreloadWall(){
             console.log(userSearched);
-            var Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
-            let messages = serverstub.getUserMessagesByEmail(Token, userSearched);
+            let Token=localStorage.getItem("loggedinusers");
+            let userEmail=localStorage.getItem("email");
+            let messages = await serverstub.getUserMessagesByEmail(Token,userEmail,userSearched).then(res=>{
+                return res;
+            }).catch(err=>{
+                console.log(err);
+            });
         
             BmessageWall.innerHTML = "";
             
-            messages.data.forEach(function(message) {
+            messages.post.forEach(function(message) {
                 
               const messageDiv = document.createElement("div");
               messageDiv.classList.add("message");
         
               const avatarImg = document.createElement("img");
-              avatarImg.src = "https://randomuser.me/api/portraits/lego/"+hashfunc(message.writer) +".jpg";
+              avatarImg.src = "https://randomuser.me/api/portraits/lego/"+hashfunc(message.poster) +".jpg";
               avatarImg.alt = "User Avatar";
               messageDiv.appendChild(avatarImg);
         
@@ -484,11 +520,11 @@ accountButton.addEventListener("click",()=>{
               textDiv.classList.add("textMessage");
         
               const writerP = document.createElement("h3");
-              writerP.textContent = message.writer;
+              writerP.textContent = message.poster;
               textDiv.appendChild(writerP);
         
               const messageP = document.createElement("p");
-              messageP.textContent = message.content;
+              messageP.textContent = message.text;
               textDiv.appendChild(messageP);
         
         
@@ -505,10 +541,15 @@ accountButton.addEventListener("click",()=>{
         try{
             let userSearched=null;
         
-            browseBtn.addEventListener("click", function(){
+            browseBtn.addEventListener("click", async function(){
                 let input=document.querySelector("#browseInput");
-                var Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
-                let userData = serverstub.getUserDataByEmail(Token, input.value);
+                let Token=localStorage.getItem("loggedinusers");
+                let userEmail=localStorage.getItem("email");
+                let userData = await serverstub.getUserDataByEmail(Token, userEmail,input.value).then(res=>{
+                    return res;
+                }).catch(err=>{
+                    console.log(err);
+                });
         
                 if(userData.success == false){
                     document.getElementById("browseInput").placeholder = "User not exist!";
@@ -520,11 +561,14 @@ accountButton.addEventListener("click",()=>{
                     browseTab.style.display="block";
         
                     //profile info
-                    let userdata=serverstub.getUserDataByEmail(Token, input.value).data;
-                    console.log(userdata);     
+                    let userdata=await serverstub.getUserDataByEmail(Token,userEmail, input.value).then(res=>{
+                        return res.data;
+                    }).catch(err=>{
+                        console.log(err);
+                    });     
                     
                     let nameBrowse=document.querySelectorAll("h1.nameBrowse")[0];
-                    nameBrowse.innerHTML=userdata.firstname+" "+userdata.familyname;
+                    nameBrowse.innerHTML=userdata.first_name+" "+userdata.family_name;
         
                     let userBrowse=document.querySelectorAll("h3.userBrowse")[0];
                     userBrowse.innerHTML=userdata.email;
@@ -545,20 +589,25 @@ accountButton.addEventListener("click",()=>{
         
             BreloadWallBtn.addEventListener("click", BreloadWall);
             
-            function BreloadWall(){
+            async function BreloadWall(){
                 console.log(userSearched);
-                var Token=Object.keys(JSON.parse(localStorage.getItem("loggedinusers")))[0];
-                let messages = serverstub.getUserMessagesByEmail(Token, userSearched);
-            
+                let Token=localStorage.getItem("loggedinusers");
+                let userEmail=localStorage.getItem("email");
+                let messages = await serverstub.getUserMessagesByEmail(Token,userEmail,userSearched).then(res=>{
+                    return res;
+                }).catch(err=>{
+                    console.log(err);
+                });
+
                 BmessageWall.innerHTML = "";
                 
-                messages.data.forEach(function(message) {
+                messages.post.reverse().forEach(function(message) {
                     
                   const messageDiv = document.createElement("div");
                   messageDiv.classList.add("message");
             
                   const avatarImg = document.createElement("img");
-                  avatarImg.src = "https://randomuser.me/api/portraits/lego/"+hashfunc(message.writer) +".jpg";
+                  avatarImg.src = "https://randomuser.me/api/portraits/lego/"+hashfunc(message.poster) +".jpg";
                   avatarImg.alt = "User Avatar";
                   messageDiv.appendChild(avatarImg);
             
@@ -566,11 +615,11 @@ accountButton.addEventListener("click",()=>{
                   textDiv.classList.add("textMessage");
             
                   const writerP = document.createElement("h3");
-                  writerP.textContent = message.writer;
+                  writerP.textContent = message.poster;
                   textDiv.appendChild(writerP);
             
                   const messageP = document.createElement("p");
-                  messageP.textContent = message.content;
+                  messageP.textContent = message.text;
                   textDiv.appendChild(messageP);
             
             
