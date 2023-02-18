@@ -12,30 +12,6 @@ var serverstub = (function() {
   var users;
   var loggedInUsers;
 
-  var syncStorage = function(){
-	if (localStorage.getItem("users") === null) {
-	    users = {};
-	} else {
-	    users = JSON.parse(localStorage.getItem("users"));
-	}
-
-	if (localStorage.getItem("loggedinusers") === null) {
-	    loggedInUsers = {};
-	} else {
-	    loggedInUsers = JSON.parse(localStorage.getItem("loggedinusers"));
-      }
-
-  }
-  
-  var persistUsers = function(){
-    localStorage.setItem("users", JSON.stringify(users));
-  };
-
-  var tokenToEmail = function(token){
-    return loggedInUsers[token];
-  };
-
-
   var serverstub = {
     signIn: async function(email, password){
       let logindata=await fetch('/login',{
@@ -54,25 +30,23 @@ var serverstub = (function() {
       return logindata;
     },
 
-    postMessage: function(token, content, toEmail){
-      syncStorage();
-      var fromEmail = tokenToEmail(token);
-      if (fromEmail != null) {
-        if (toEmail == null) {
-          toEmail = fromEmail;
-        }
-        if(users[toEmail] != null){
-          var recipient = users[toEmail];
-          var message = {"writer": fromEmail, "content": content};
-          recipient.messages.unshift(message);
-          persistUsers();
-          return {"success": true, "message": "Message posted"};
-        } else {
-          return {"success": false, "message": "No such user."};
-        }
-      } else {
-        return {"success": false, "message": "You are not signed in."};
+    postMessage: async function(token, email,content, toEmail){
+      let postData=await fetch('/post',{
+        method:'POST',
+        headers:{
+          'Content-Type': 'application/json',
+          'Authorization':token,
+          'email':email,
+        },
+        body: JSON.stringify({receiver:toEmail,poster:email,text:content}),
+      }).then(res=>{
+        return res.json();
+      }).then(res=>{
+        console.log(res);
+        return res;
       }
+      );
+      return postData;
     },
 
     getUserDataByToken: async function(token,email){

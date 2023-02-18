@@ -22,7 +22,7 @@ if((loggedinusers==null)||(Object.keys(loggedinusers).length===2)){
 }
 
 // Step 3:Confirm password
-function confirm_psw(){
+async function confirm_psw(){
     var psw=document.getElementById("psw");
     var repsw=document.getElementById("repsw");
     if(psw.value!==repsw.value){
@@ -30,16 +30,7 @@ function confirm_psw(){
         return ;
     }else{
         psw.setCustomValidity("");
-        return ;
-    }
-}
-
-
-// Step 4:Signup Mechanism
-try{
-    let signup=document.querySelector("#signupform");
-    signup.addEventListener("submit",()=>{
-
+        let signup=document.querySelector("#signupform");
         let personalData={
             firstname:signup[0].value,
             familyname:signup[1].value,
@@ -66,18 +57,64 @@ try{
         }else{
             check_if_signup_message_appear.remove();
         }
-        let signup_data=serverstub.signUp(personalData);
+        let signup_data=await serverstub.signUp(personalData).then(res=>{
+            return res;
+        }).catch(err=>{
+            console.log(err);
+        });
 
         let signup_message=document.createElement("h3");
         signup_message.className="signup_message";
         signup_message.innerHTML=signup_data.message;
         signup_message.style.margin="1rem";
         document.querySelector("#signup").appendChild(signup_message);
-
-    });
-}catch(error){
-    console.log(error);
+    }
 }
+
+
+// Step 4:Signup Mechanism
+// try{
+//     let signup=document.querySelector("#signupform");
+//     signup.addEventListener("submit",()=>{
+
+//         let personalData={
+//             firstname:signup[0].value,
+//             familyname:signup[1].value,
+//             gender:signup[2].value,
+//             city:signup[3].value,
+//             country:signup[4].value,
+//             email:signup[5].value,
+//             password:signup[6].value
+//         };
+//         console.log(personalData);
+
+//         // local storage
+//         var myList=localStorage.getItem("customerData");
+//         if(myList==null){
+//             localStorage.setItem("customerData",JSON.stringify([personalData]));
+//         }else{
+//             let customArray=JSON.parse(myList);
+//             customArray.push(personalData);
+//             localStorage.setItem("customerData",JSON.stringify(customArray));
+//         }
+//         let check_if_signup_message_appear=document.querySelector("h3.signup_message");
+//         if(!check_if_signup_message_appear){
+//             null;
+//         }else{
+//             check_if_signup_message_appear.remove();
+//         }
+//         let signup_data=serverstub.signUp(personalData);
+
+//         let signup_message=document.createElement("h3");
+//         signup_message.className="signup_message";
+//         signup_message.innerHTML=signup_data.message;
+//         signup_message.style.margin="1rem";
+//         document.querySelector("#signup").appendChild(signup_message);
+
+//     });
+// }catch(error){
+//     console.log(error);
+// }
 
 let j=true;
 // Step 5:Signin Mechanism
@@ -256,6 +293,8 @@ try{
                     document.querySelector("div.change").appendChild(prompt_information);
                     setTimeout(()=>{
                         prompt_information.remove();
+                        localStorage.removeItem("email");
+                        localStorage.removeItem("loggedinusers");
                         changepswView.style.display="none";
                         profilepage.style.display="none";
                         welcomepage.style.display="block";
@@ -379,14 +418,21 @@ accountButton.addEventListener("click",async ()=>{
     const reloadWallBtn = document.querySelector("#reloadWallBtn");
     reloadWall();
   
-    postBtn.addEventListener("click", function() {
+    postBtn.addEventListener("click",async function() {
       let Token=localStorage.getItem("loggedinusers");
+      let userEmail=localStorage.getItem("email");
       const message = messageText.value;
       const recipientEmail = email.value;
 
+      let postData=await serverstub.postMessage(Token,userEmail, message, recipientEmail).then(res=>{
+        return res;
+      }).catch(err=>{
+        console.log(err);
+      })
+
         if(!message.length){
             document.getElementById("messageText").placeholder = "Write something here!";
-        }else if(!serverstub.postMessage(Token, message, recipientEmail).success){
+        }else if(!postData.success){
             document.getElementById("postemail").value = "";
             document.getElementById("postemail").placeholder = "Incorrect Email";
         } else{
