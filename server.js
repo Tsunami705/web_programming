@@ -3,8 +3,16 @@
 //const post_message = require("./public/server_function");
 
 require("dotenv").config();
+
 const express = require("express");
 const app = express();
+const http = require("http");
+const server = http.createServer(app);
+
+const { Server } = require("socket.io");
+const io = new Server(server);
+
+
 const ejs = require("ejs");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -40,10 +48,26 @@ mongoose.connect(process.env.MONGO_URI, {
 });
 
 
-// 
+//Welcome page
 app.get("/", (req, res) => {
     res.render("client.ejs");
 });
+
+server.listen(3000, () => {
+    console.log("Server is running on port: 3000");
+});
+
+
+io.on("connection", (socket) => {
+    console.log("New user connected");
+    io.emit('prova1', "Hello world");
+    socket.on("disconnect", () => {
+        console.log("User disconnected");
+    });
+});
+
+
+
 
 //signup function
 //params:{ first_name, fam_name, gender, city, country, email, psw } -> req.body
@@ -578,8 +602,5 @@ app.get("/*", (req, res) => {
     res.status(300).redirect("/");
 })
 
-app.listen(3000, () => {
-    console.log("Server is running on port 3000");
-});
 
 

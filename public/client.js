@@ -1,4 +1,11 @@
 
+socket.on('prova1', function(data) {
+    alert('prova1');
+    //console.log(data);
+});
+
+
+
 //Step 5:skip to the right page
 let loggedinusers=localStorage.getItem("loggedinusers");
 let welcomepage=document.querySelector("#welcomepage");
@@ -141,6 +148,7 @@ try{
         //session storage
         // sessionStorage.setItem(JSON.stringify(loginData.username),signinData.data);
         let check_if_signin_message_exist=document.querySelector("h3.signin_fail_message");
+        
         if(signinData.success){
             if(!check_if_signin_message_exist){
                 null;
@@ -149,6 +157,20 @@ try{
             }
 
             var Token=localStorage.getItem("loggedinusers");
+            var socket = io.connect('http://localhost:3000');
+
+            let loggedInUsers={
+                email:loginData.username,
+                token:Token,
+                socketId:socket.id
+            }
+            
+            //console.log(personalData);
+
+            // storage
+
+
+            
             // console.log(Token);
             profilepage.style.display="block";
             welcomepage.style.display="none";
