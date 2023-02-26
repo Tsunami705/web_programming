@@ -5,11 +5,11 @@
 require("dotenv").config();
 
 const express = require("express");
-const app = express();
-const http = require("http");
-const server = http.createServer(app);
-
+const http  = require("http");
 const { Server } = require("socket.io");
+
+const app = express();
+const server = http.createServer(app);
 const io = new Server(server);
 
 
@@ -19,6 +19,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const User = require("./models/user");
 const Post = require("./models/post");
+const Logged = require("./models/logged");
 const bcrypt = require("bcrypt");//encrypt the password
 const saltRounds = 10;    //cost factor，数字越大，加密所花时间越久
 const jwt = require('jsonwebtoken');
@@ -47,12 +48,6 @@ mongoose.connect(process.env.MONGO_URI, {
     console.log(e);
 });
 
-
-//Welcome page
-app.get("/", (req, res) => {
-    res.render("client.ejs");
-});
-
 server.listen(3000, () => {
     console.log("Server is running on port: 3000");
 });
@@ -60,13 +55,41 @@ server.listen(3000, () => {
 
 io.on("connection", (socket) => {
     console.log("New user connected");
-    io.emit('prova1', "Hello world");
-    socket.on("disconnect", () => {
-        console.log("User disconnected");
+   
+    //console.log(socket.request._query['token']);
+    //socket.emit('setClient', { client: socket.id });
+    //io.emit('prova1',"prova1");
+    socket.on('login', (email) => {
+
+        console.log("login received");
+        //console.log(data.token);
+        //console.log(data);
+        // if not find logged save onece new else call remove other
+
+        // disconnect user already in the room
+        socket.rooms.forEach(room => {
+            if(room == email){
+                // Restore homepage
+                io.to(room).emit('restoreHomepage');
+                
+                socket.leave(room);
+            }
+        });
+
+        // Add user to room
+        socket.join(email);
     });
+
 });
 
 
+io.emit('prova1', { prova: 'prova1' });
+
+
+//Welcome page
+app.get("/", (req, res) => {
+    res.render("client.ejs");
+});
 
 
 //signup function
