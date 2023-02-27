@@ -67,14 +67,20 @@ io.on("connection", (socket) => {
         // if not find logged save onece new else call remove other
 
         // disconnect user already in the room
-        socket.rooms.forEach(room => {
-            if(room == email){
-                // Restore homepage
-                io.to(room).emit('restoreHomepage');
-                
-                socket.leave(room);
-            }
-        });
+        if(io.rooms === undefined){
+            null;
+        }else{
+            console.log(io.rooms);
+            io.rooms.forEach(room => {
+                if(room == email){
+                    // Restore homepage
+                    io.to(room).emit('restoreHomepage');
+                    console.log("You have been disconnected");
+                    socket.leave(room);
+                }
+            });
+        }
+
 
         // Add user to room
         socket.join(email);

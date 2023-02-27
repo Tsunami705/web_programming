@@ -10,11 +10,6 @@ socket = io();
 let user = "mario";
 let Token = 1234;
 
-// this function has to be moved inside the login function and use only the param email to send it ot the server
-socket.on("connect", () => {
-  alert("Connected!");
-  socket.emit("login", { email: user });
-});
 
 //
 
@@ -36,10 +31,10 @@ socket.on("restoreHomepage", function () {
   window.location.reload();
 });
 
-socket.on("prova1", function (data) {
-  alert("prova1");
-  //console.log(data);
-});
+// socket.on("prova1", function (data) {
+//   alert("prova1");
+//   //console.log(data);
+// });
 
 //Step 5:skip to the right page
 let loggedinusers = localStorage.getItem("loggedinusers");
@@ -198,13 +193,11 @@ try {
 
       //// EMIT TO SERVER
       alert("login success");
-      socket.on("connect", () => {
-        alert("Connected!");
-        socket.emit("login", {
-          email: loginData.username.toString(),
-          token: Token.toString(),
-        });
+     
+      socket.emit("login", {
+        email: loginData.username
       });
+      alert(loginData.username);
 
       // console.log(Token);
       profilepage.style.display = "block";
