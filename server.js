@@ -61,35 +61,37 @@ io.on("connection", (socket) => {
     //io.emit('prova1',"prova1");
     socket.on('login', (email) => {
 
-        console.log("login received");
+        email = email.email;
+        console.log("login received by ", email);
         //console.log(data.token);
         //console.log(data);
         // if not find logged save onece new else call remove other
+        io.to(email).emit('restoreHomepage');
+        socket.join(email);
 
+        // console.log("#####################")
+        // console.log(io.to(email));
+        // console.log("#####################")
         // disconnect user already in the room
-        if(io.rooms === undefined){
-            null;
-        }else{
-            console.log(io.rooms);
-            io.rooms.forEach(room => {
-                if(room == email){
-                    // Restore homepage
-                    io.to(room).emit('restoreHomepage');
-                    console.log("You have been disconnected");
-                    socket.leave(room);
-                }
-            });
-        }
+        // if(io.rooms === undefined){
+        //     null;
+        // }else{
+        //     console.log(io.rooms);
+        //     io.rooms.forEach(room => {
+        //         if(room == email){
+        //             // Restore homepage
+        //             io.to(room).emit('restoreHomepage');
+        //             console.log("You have been disconnected");
+        //             socket.leave(room);
+        //         }
+        //     });
+        // }
 
 
         // Add user to room
-        socket.join(email);
     });
 
 });
-
-
-io.emit('prova1', { prova: 'prova1' });
 
 
 //Welcome page

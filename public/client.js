@@ -192,12 +192,12 @@ try {
       var Token = localStorage.getItem("loggedinusers");
 
       //// EMIT TO SERVER
-      alert("login success");
+      //alert("login success");
      
       socket.emit("login", {
         email: loginData.username
       });
-      alert(loginData.username);
+      //alert(loginData.username);
 
       // console.log(Token);
       profilepage.style.display = "block";
