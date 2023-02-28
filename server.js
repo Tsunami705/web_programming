@@ -52,16 +52,19 @@ server.listen(3000, () => {
     console.log("Server is running on port: 3000");
 });
 
+var socket;
 
 io.on("connection", (socket) => {
     console.log("New user connected");
-   
+    
     //console.log(socket.request._query['token']);
     //socket.emit('setClient', { client: socket.id });
     //io.emit('prova1',"prova1");
-    socket.on('login', (email) => {
+    socket.on('login', (data) => {
 
-        email = email.email;
+        let decode = jwt.verify(data.token , process.env.SECRET_KEY);
+        email = decode.email;
+
         console.log("login received by ", email);
         //console.log(data.token);
         //console.log(data);

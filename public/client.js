@@ -2,21 +2,16 @@
 
 //const { io } = require("socket.io-client");
 
-var socket;
+var socket = io();
 
 // ON LOGIN ACTION
-socket = io();
-
-let user = "mario";
-let Token = 1234;
-
 
 //
 
 //  Diconnect user logged in
 socket.on("restoreHomepage", function () {
   // alert("You have been disconnected");
-  alert("You have been disconnected");
+  //alert("You have been disconnected");
 
   // remove from local storage
   localStorage.removeItem("loggedinusers");
@@ -112,49 +107,6 @@ async function confirm_psw() {
   }
 }
 
-// Step 4:Signup Mechanism
-// try{
-//     let signup=document.querySelector("#signupform");
-//     signup.addEventListener("submit",()=>{
-
-//         let personalData={
-//             firstname:signup[0].value,
-//             familyname:signup[1].value,
-//             gender:signup[2].value,
-//             city:signup[3].value,
-//             country:signup[4].value,
-//             email:signup[5].value,
-//             password:signup[6].value
-//         };
-//         console.log(personalData);
-
-//         // local storage
-//         var myList=localStorage.getItem("customerData");
-//         if(myList==null){
-//             localStorage.setItem("customerData",JSON.stringify([personalData]));
-//         }else{
-//             let customArray=JSON.parse(myList);
-//             customArray.push(personalData);
-//             localStorage.setItem("customerData",JSON.stringify(customArray));
-//         }
-//         let check_if_signup_message_appear=document.querySelector("h3.signup_message");
-//         if(!check_if_signup_message_appear){
-//             null;
-//         }else{
-//             check_if_signup_message_appear.remove();
-//         }
-//         let signup_data=serverstub.signUp(personalData);
-
-//         let signup_message=document.createElement("h3");
-//         signup_message.className="signup_message";
-//         signup_message.innerHTML=signup_data.message;
-//         signup_message.style.margin="1rem";
-//         document.querySelector("#signup").appendChild(signup_message);
-
-//     });
-// }catch(error){
-//     console.log(error);
-// }
 
 let j = true;
 // Step 5:Signin Mechanism
@@ -189,13 +141,13 @@ try {
         check_if_signin_message_exist.remove();
       }
 
-      var Token = localStorage.getItem("loggedinusers");
+      //var Token = localStorage.getItem("loggedinusers");
 
       //// EMIT TO SERVER
       //alert("login success");
      
       socket.emit("login", {
-        email: loginData.username
+        token: localStorage.getItem("loggedinusers"),
       });
       //alert(loginData.username);
 
