@@ -5,10 +5,14 @@ const loggedSchema=new mongoose.Schema({
         type : String,
         required : true
     },
-    token : {
-        type : String,
+    visual : {
+        type : Number,
         required : true
     },
+    status : {
+        type : String,
+        required : true
+    }
 });
 
 

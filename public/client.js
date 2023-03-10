@@ -1,9 +1,5 @@
-//let Token = "1234"; //localStorage.getItem("loggedinusers");
 
-//const { io } = require("socket.io-client");
-
-var socket = io();
-
+//var socket = io();
 // ON LOGIN ACTION
 
 //

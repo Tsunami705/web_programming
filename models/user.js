@@ -31,6 +31,16 @@ const userSchema=new mongoose.Schema({
         type:String,
         required:true
     },
+    status:{
+        type:String,
+        required:false,
+        default : "offline"
+    },
+    visual:{
+        type:Number,
+        required:false,
+        default : 0
+    },
 });
 
 const User=mongoose.model("User",userSchema);

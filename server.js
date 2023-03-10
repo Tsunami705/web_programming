@@ -12,7 +12,6 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-
 const ejs = require("ejs");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -25,8 +24,6 @@ const saltRounds = 10;    //cost factor，数字越大，加密所花时间越�
 const jwt = require('jsonwebtoken');
 const methodOverride = require("method-override"); //PUT/PATCH request
 const { off } = require("./models/user");
-var loggedInUsers;
-
 
 //middleware
 app.use(express.static("public"));
@@ -52,7 +49,6 @@ server.listen(3000, () => {
     console.log("Server is running on port: 3000");
 });
 
-var socket;
 
 io.on("connection", (socket) => {
     console.log("New user connected");
@@ -64,38 +60,44 @@ io.on("connection", (socket) => {
 
         let decode = jwt.verify(data.token , process.env.SECRET_KEY);
         email = decode.email;
-
         console.log("login received by ", email);
-        //console.log(data.token);
-        //console.log(data);
-        // if not find logged save onece new else call remove other
+       
+        // if not find logged save once new else call remove other
         io.to(email).emit('restoreHomepage');
+        io.in(email).socketsLeave(email);
         socket.join(email);
-
-        // console.log("#####################")
-        // console.log(io.to(email));
-        // console.log("#####################")
-        // disconnect user already in the room
-        // if(io.rooms === undefined){
-        //     null;
-        // }else{
-        //     console.log(io.rooms);
-        //     io.rooms.forEach(room => {
-        //         if(room == email){
-        //             // Restore homepage
-        //             io.to(room).emit('restoreHomepage');
-        //             console.log("You have been disconnected");
-        //             socket.leave(room);
-        //         }
-        //     });
-        // }
-
-
-        // Add user to room
     });
 
 });
 
+
+// let onlineUsers = 0;
+async function changeStatus(email, status){
+    /* if(status == "online"){
+        onlineUsers++;
+    }else{
+        onlineUsers--;  
+    }
+ */
+    User.findOne({email: email}).then((user) => {
+        if(user){
+            user.status = status;
+            user.save();
+        }
+    });
+
+    updateChart(email);
+}
+
+async function updateChart(email) {
+    let wallPosts = (await Post.find({ receiver: email })).length;
+    let pageViews = (await User.findOne({ email: email }));
+    let onlineUsers = (await User.find({ status: "online" })).length;
+    console.log("wallPosts: ", wallPosts);
+    console.log("onlineUsers: ", onlineUsers);
+    console.log("pageViews: ", pageViews);
+    io.emit('chart', { wallPosts: wallPosts, pageViews: pageViews.visual, onlineUsers: onlineUsers });
+}
 
 //Welcome page
 app.get("/", (req, res) => {
@@ -137,7 +139,7 @@ app.post("/signup", async (req, res) => {
                 city: city,
                 country: country,
                 email: email,
-                password: hashpassword,
+                password: hashpassword
             });
 
             if(!validateEmail(email)){
@@ -211,7 +213,7 @@ app.post("/login", async (req, res) => {
                     );
                     // res.cookie("token", token, { signed: false });
                     // res.header('Authorization', [token]);
-
+                    changeStatus(email, "online");
 
                     // after response,the front-end should add the token to the localStorage
                     res.status(201).send({ "success": true, "message": "Successfully signed in.", "data": token });
@@ -284,6 +286,7 @@ async function post_message(text, receiver, poster) {
         poster: poster,
     });
     await newPost.save();
+    updateChart(receiver);
 }
 
 
@@ -312,6 +315,12 @@ app.post("/signout", async (req, res) => {
         }
         // after response,the front-end should remove the token from the localStorage
         // res.clearCookie('token');
+
+        //Remove from socket room
+        io.in(email).socketsLeave(email);
+        //Change status to offline
+        changeStatus(email, "offline");
+
         res.status(200).send({ "success": true, "message": "Signout successfully." });
     } else {
         res.status(403).send({ "success": false, "message": "You are not signed in." });
@@ -394,6 +403,7 @@ async function get_user_data_by_email(token, email) {
     if (token === undefined) {
         return { "success": false, "message": "You are not signed in." };
     } else {
+
         let foundUser = await User.findOne({ email: email });
         if (!foundUser) {
             return { "success": false, "message": "No such user." };
@@ -452,7 +462,17 @@ async function get_user_message_by_email(token, email) {
         return { "success": false, "message": "Not signed in" };
     }
 
-    let foundPost = await Post.find({ receiver: email })
+    let foundPost = await Post.find({ receiver: email });
+
+    //Update the user messages
+    User.findOne({ email: email }, (user) => {
+        if (user) {
+            user.visual++;
+            user.save();
+        }
+    });
+    updateChart();
+
     if (foundPost.length == 0) {
         return { "success": false, "message": "No such user." };
     }
@@ -635,6 +655,4 @@ async function validate_token(token, email) {
 app.get("/*", (req, res) => {
     res.status(300).redirect("/");
 })
-
-
 
