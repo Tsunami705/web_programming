@@ -635,7 +635,7 @@ app.get("/getmessagebytoken", async (req, res) => {
 async function validate_token(token, email) {
     // if (token === undefined) {
     //     return false;
-    // }
+    // } 
     try {
         let decoded = jwt.verify(token, process.env.SECRET_KEY);
         console.log(decoded);
