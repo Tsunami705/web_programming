@@ -68,6 +68,12 @@ io.on("connection", (socket) => {
         socket.join(email);
     });
 
+    socket.on('userBrowsed', (data) => {
+        User.findOneAndUpdate({email: data}, { $inc: { 'visual': 1 } }).exec();
+        updateChart(data);
+    });
+
+
 });
 
 
@@ -78,25 +84,25 @@ async function changeStatus(email, status){
     }else{
         onlineUsers--;  
     }
- */
+    */
     User.findOne({email: email}).then((user) => {
         if(user){
             user.status = status;
             user.save();
         }
     });
-
     updateChart(email);
 }
 
 async function updateChart(email) {
+    console.log(email);
     let wallPosts = (await Post.find({ receiver: email })).length;
-    let pageViews = (await User.findOne({ email: email }));
+    let pageViews = (await User.findOne({ email: email })).visual;
     let onlineUsers = (await User.find({ status: "online" })).length;
     console.log("wallPosts: ", wallPosts);
     console.log("onlineUsers: ", onlineUsers);
     console.log("pageViews: ", pageViews);
-    io.emit('chart', { wallPosts: wallPosts, pageViews: pageViews.visual, onlineUsers: onlineUsers });
+    io.to(email).emit('chart', { wallPosts: wallPosts, pageViews: pageViews, onlineUsers: onlineUsers });
 }
 
 //Welcome page
@@ -408,6 +414,7 @@ async function get_user_data_by_email(token, email) {
         if (!foundUser) {
             return { "success": false, "message": "No such user." };
         } else {
+            updateChart(email);
             return { "success": true, "message": "User data retrieved.", "data": foundUser };
         }
     }
@@ -465,18 +472,14 @@ async function get_user_message_by_email(token, email) {
     let foundPost = await Post.find({ receiver: email });
 
     //Update the user messages
-    User.findOne({ email: email }, (user) => {
-        if (user) {
-            user.visual++;
-            user.save();
-        }
-    });
-    updateChart();
+    //await User.findOneAndUpdate({ email: email }, {$inc: {'visual' : 1}}).exec();
+    
 
     if (foundPost.length == 0) {
         return { "success": false, "message": "No such user." };
     }
 
+    updateChart(email);
     return { "success": true, "message": "User data retrieved.", "post": foundPost };
 }
 //API

@@ -529,15 +529,21 @@ async function load_profile_page() {
         // Show the div with user informmation
         browseTab.style.display = "block";
 
+        // Send socket event to server to notify that a user hasb been browsed
+        console.log("user browsed: " + input.value);
+        socket.emit("userBrowsed", input.value);
+
         //profile info
-        let userdata = await serverstub
+        /* let userdata = await serverstub
           .getUserDataByEmail(Token, userEmail, input.value)
           .then((res) => {
             return res.data;
           })
           .catch((err) => {
             console.log(err);
-          });
+          }); */
+        let userdata = userData.data;
+
         console.log(userdata);
 
         let nameBrowse = document.querySelectorAll("h1.nameBrowse")[0];
@@ -579,6 +585,10 @@ async function load_profile_page() {
 
       BmessageWall.innerHTML = "";
 
+      if(messages.post == undefined){
+        return;
+      }
+
       messages.post.forEach(function (message) {
         const messageDiv = document.createElement("div");
         messageDiv.classList.add("message");
@@ -608,9 +618,11 @@ async function load_profile_page() {
       });
     }
   } catch (e) {}
+  /*
   if (!Token) {
   } else {
     try {
+      /*
       let userSearched = null;
 
       browseBtn.addEventListener("click", async function () {
@@ -638,14 +650,15 @@ async function load_profile_page() {
           browseTab.style.display = "block";
 
           //profile info
-          let userdata = await serverstub
+          /* let userdata = await serverstub
             .getUserDataByEmail(Token, userEmail, input.value)
             .then((res) => {
               return res.data;
             })
             .catch((err) => {
               console.log(err);
-            });
+            }); 
+            let userdata = userData.data;
 
           let nameBrowse = document.querySelectorAll("h1.nameBrowse")[0];
           nameBrowse.innerHTML =
@@ -668,8 +681,10 @@ async function load_profile_page() {
           //load user wall
           BreloadWall();
         }
-      });
-
+      }
+      );
+      */
+      /*
       BreloadWallBtn.addEventListener("click", BreloadWall);
 
       async function BreloadWall() {
@@ -714,7 +729,8 @@ async function load_profile_page() {
 
           BmessageWall.appendChild(messageDiv);
         });
-      }
+      } */ /*
+
     } catch (e) {}
-  }
+  }*/
 }
