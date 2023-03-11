@@ -4,12 +4,14 @@
   "description": "This is the lab 2 of web programming",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@azure/identity": "^2.1.0",
+    "@azure/keyvault-secrets": "^4.6.0",
+    "azure": "^2.3.1-preview",
     "bcrypt": "^5.1.0",
     "chart.js": "^4.2.1",
     "cookie-parser": "^1.4.6",
