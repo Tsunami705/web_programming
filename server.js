@@ -45,7 +45,7 @@ mongoose.connect(process.env.MONGO_URI, {
     console.log(e);
 });
 
-server.listen(3000, () => {
+server.listen(8080, () => {
     console.log("Server is running on port: 3000");
 });
 
