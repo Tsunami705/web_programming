@@ -57,7 +57,7 @@ io.on("connection", (socket) => {
     //socket.emit('setClient', { client: socket.id });
     //io.emit('prova1',"prova1");
     socket.on('login', (data) => {
-
+        
         let decode = jwt.verify(data.token , process.env.SECRET_KEY);
         email = decode.email;
         console.log("login received by ", email);

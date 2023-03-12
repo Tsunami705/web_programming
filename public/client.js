@@ -28,7 +28,7 @@ socket.on("restoreHomepage", function () {
 // });
 
 //Step 5:skip to the right page
-async function load_home_page() {
+
 let loggedinusers = localStorage.getItem("loggedinusers");
 let welcomepage = document.querySelector("#welcomepage");
 let profilepage = document.querySelector("#profilepage");
@@ -48,7 +48,6 @@ if (loggedinusers == null || Object.keys(loggedinusers).length === 2) {
   accountPage.style.display = "none";
   homePage.style.display = "block";
   // sessionStorage.setItem("tabLiNum","home");
-}
 }
 
 // Step 3:Confirm password
@@ -198,10 +197,14 @@ try {
   window.addEventListener("load", () => {
     let Token = localStorage.getItem("loggedinusers");
     if (!Token) {
-      load_home_page();
-      //null;
+      //load_home_page();
+      null;
     } else {
       load_profile_page();
+
+      socket.emit("login", {
+        token: localStorage.getItem("loggedinusers"),
+      });
     }
   });
 } catch (e) {}
