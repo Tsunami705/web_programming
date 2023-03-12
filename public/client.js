@@ -28,6 +28,7 @@ socket.on("restoreHomepage", function () {
 // });
 
 //Step 5:skip to the right page
+async function load_home_page() {
 let loggedinusers = localStorage.getItem("loggedinusers");
 let welcomepage = document.querySelector("#welcomepage");
 let profilepage = document.querySelector("#profilepage");
@@ -47,6 +48,7 @@ if (loggedinusers == null || Object.keys(loggedinusers).length === 2) {
   accountPage.style.display = "none";
   homePage.style.display = "block";
   // sessionStorage.setItem("tabLiNum","home");
+}
 }
 
 // Step 3:Confirm password
@@ -196,7 +198,8 @@ try {
   window.addEventListener("load", () => {
     let Token = localStorage.getItem("loggedinusers");
     if (!Token) {
-      null;
+      load_home_page();
+      //null;
     } else {
       load_profile_page();
     }
@@ -531,6 +534,7 @@ async function load_profile_page() {
 
         // Send socket event to server to notify that a user hasb been browsed
         console.log("user browsed: " + input.value);
+        
         socket.emit("userBrowsed", input.value);
 
         //profile info

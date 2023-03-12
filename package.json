@@ -11,7 +11,7 @@
   "dependencies": {
     "@azure/identity": "^2.1.0",
     "@azure/keyvault-secrets": "^4.6.0",
-    "azure": "^2.3.1-preview",
+    "azure": "^0.7.18",
     "bcrypt": "^5.1.0",
     "chart.js": "^4.2.1",
     "cookie-parser": "^1.4.6",
@@ -27,4 +27,3 @@
     "socket.io-client": "^4.6.1"
   }
 }
-
