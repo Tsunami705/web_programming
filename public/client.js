@@ -156,9 +156,10 @@ try {
       homePage.style.display = "block";
       sessionStorage.setItem("tabLiNum", "home");
 
-      load_profile_page();
       window.location.reload();
+      load_profile_page();
 
+      alert(getCurrentPosition())
     } else {
       if (!check_if_signin_message_exist) {
         null;
@@ -340,6 +341,10 @@ function hashfunc(String) {
   result = result % 10;
   return result;
 }
+
+
+
+
 async function load_profile_page() {
   // Step 7:display your account information
 
@@ -396,6 +401,11 @@ async function load_profile_page() {
     .catch((error) => {
       console.log(error);
     });
+
+  
+  //ACCOUNT
+ 
+
   //email
   let usernameinfo = document.querySelectorAll(
     "div.infobox div.usernameinfo"
@@ -415,6 +425,10 @@ async function load_profile_page() {
   countryinfo.innerHTML = userdata.country;
 
   //HOMEPAGE
+  //Location
+  let locationHome = document.querySelectorAll("h3.locationHome")[0];
+  locationHome.innerHTML = userdata.location;
+
   let nameHome = document.querySelectorAll("h1.nameHome")[0];
   nameHome.innerHTML = userdata.first_name + " " + userdata.family_name;
 
@@ -500,8 +514,12 @@ async function load_profile_page() {
       textDiv.classList.add("textMessage");
 
       const writerP = document.createElement("h3");
-      writerP.textContent = message.poster;
-      textDiv.appendChild(writerP);
+      if (message.location ===  undefined) {
+        writerP.textContent = (message.poster + " from " + "Unknown");
+      } 
+
+        writerP.textContent = (message.poster + " from " + message.location);
+        textDiv.appendChild(writerP);
 
       const messageP = document.createElement("p");
       messageP.textContent = message.text;
@@ -615,7 +633,7 @@ async function load_profile_page() {
         textDiv.classList.add("textMessage");
 
         const writerP = document.createElement("h3");
-        writerP.textContent = message.poster;
+        writerP.textContent = (message.poster + message.location);
         textDiv.appendChild(writerP);
 
         const messageP = document.createElement("p");
@@ -628,6 +646,7 @@ async function load_profile_page() {
       });
     }
   } catch (e) {}
+
   /*
   if (!Token) {
   } else {
