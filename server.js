@@ -66,7 +66,6 @@ io.on("connection", (socket) => {
         io.to(email).emit('restoreHomepage');
         io.in(email).socketsLeave(email);
         socket.join(email);
-        updateChart(email);
     });
 
     socket.on('userBrowsed', (data) => {
@@ -92,18 +91,18 @@ async function changeStatus(email, status){
             user.save();
         }
     });
-    io.emit('onlineUsers', {onlineUsers: (await User.find({ status: "online" })).length});
+    updateChart(email);
 }
 
 async function updateChart(email) {
     console.log(email);
     let wallPosts = (await Post.find({ receiver: email })).length;
     let pageViews = (await User.findOne({ email: email })).visual;
-    //let onlineUsers = (await User.find({ status: "online" })).length;
+    let onlineUsers = (await User.find({ status: "online" })).length;
     console.log("wallPosts: ", wallPosts);
     console.log("onlineUsers: ", onlineUsers);
     console.log("pageViews: ", pageViews);
-    io.to(email).emit('chart', { wallPosts: wallPosts, pageViews: pageViews });
+    io.to(email).emit('chart', { wallPosts: wallPosts, pageViews: pageViews, onlineUsers: onlineUsers });
 }
 
 //Welcome page

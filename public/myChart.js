@@ -43,10 +43,6 @@ socket.on("chart", (data) => {
   // update chart data
   wallPosts = data.wallPosts;
   pageViews = data.pageViews;
-  updateChart();
-});
-
-socket.on("onlineUsers", (data) => {
   onlineUsers = data.onlineUsers;
   updateChart();
 });
