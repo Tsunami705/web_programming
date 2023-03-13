@@ -157,6 +157,8 @@ try {
       sessionStorage.setItem("tabLiNum", "home");
 
       load_profile_page();
+      window.location.reload();
+
     } else {
       if (!check_if_signin_message_exist) {
         null;
