@@ -555,7 +555,7 @@ async function load_profile_page() {
         console.log(userdata);
 
         let nameBrowse = document.querySelectorAll("h1.nameBrowse")[0];
-        nameBrowse.innerHTML = userdata.firstname + " " + userdata.familyname;
+        nameBrowse.innerHTML = userdata.first_name + " " + userdata.family_name;
 
         let userBrowse = document.querySelectorAll("h3.userBrowse")[0];
         userBrowse.innerHTML = userdata.email;
