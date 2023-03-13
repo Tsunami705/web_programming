@@ -28,6 +28,7 @@ socket.on("restoreHomepage", function () {
 // });
 
 //Step 5:skip to the right page
+
 let loggedinusers = localStorage.getItem("loggedinusers");
 let welcomepage = document.querySelector("#welcomepage");
 let profilepage = document.querySelector("#profilepage");
@@ -196,9 +197,14 @@ try {
   window.addEventListener("load", () => {
     let Token = localStorage.getItem("loggedinusers");
     if (!Token) {
+      //load_home_page();
       null;
     } else {
       load_profile_page();
+
+      socket.emit("login", {
+        token: localStorage.getItem("loggedinusers"),
+      });
     }
   });
 } catch (e) {}
@@ -222,6 +228,7 @@ try {
       sessionStorage.setItem("tabLiNum", "home");
       profilepage.style.display = "none";
       welcomepage.style.display = "block";
+      delete_event_listener();
       localStorage.removeItem("loggedinusers");
       localStorage.removeItem("email");
     } else {
@@ -348,28 +355,28 @@ async function load_profile_page() {
     homePage.style.display = "none";
   }
 
-  homeButton.addEventListener("click", () => {
+  homeButton.addEventListener("click", func1=() => {
     browsePage.style.display = "none";
     accountPage.style.display = "none";
     homePage.style.display = "block";
     sessionStorage.setItem("tabLiNum", "home");
   });
 
-  logoButton.addEventListener("click", () => {
+  logoButton.addEventListener("click", func2=() => {
     browsePage.style.display = "none";
     accountPage.style.display = "none";
     homePage.style.display = "block";
     sessionStorage.setItem("tabLiNum", "home");
   });
 
-  browseButton.addEventListener("click", () => {
+  browseButton.addEventListener("click", func3=() => {
     browsePage.style.display = "block";
     accountPage.style.display = "none";
     homePage.style.display = "none";
     sessionStorage.setItem("tabLiNum", "browse");
   });
 
-  accountButton.addEventListener("click", async () => {
+  accountButton.addEventListener("click", func4=() => {
     browsePage.style.display = "none";
     accountPage.style.display = "block";
     homePage.style.display = "none";
@@ -429,7 +436,7 @@ async function load_profile_page() {
   const reloadWallBtn = document.querySelector("#reloadWallBtn");
   reloadWall();
 
-  postBtn.addEventListener("click", async function () {
+  postBtn.addEventListener("click", func5=async()=> {
     let Token = localStorage.getItem("loggedinusers");
     let userEmail = localStorage.getItem("email");
     const message = messageText.value;
@@ -506,7 +513,7 @@ async function load_profile_page() {
   try {
     let userSearched = null;
 
-    browseBtn.addEventListener("click", async function () {
+    browseBtn.addEventListener("click", func6=async() =>{
       let input = document.querySelector("#browseInput");
       let Token = localStorage.getItem("loggedinusers");
       let userEmail = localStorage.getItem("email");
@@ -531,6 +538,7 @@ async function load_profile_page() {
 
         // Send socket event to server to notify that a user hasb been browsed
         console.log("user browsed: " + input.value);
+        
         socket.emit("userBrowsed", input.value);
 
         //profile info
@@ -547,7 +555,7 @@ async function load_profile_page() {
         console.log(userdata);
 
         let nameBrowse = document.querySelectorAll("h1.nameBrowse")[0];
-        nameBrowse.innerHTML = userdata.firstname + " " + userdata.familyname;
+        nameBrowse.innerHTML = userdata.first_name + " " + userdata.family_name;
 
         let userBrowse = document.querySelectorAll("h3.userBrowse")[0];
         userBrowse.innerHTML = userdata.email;
@@ -734,3 +742,18 @@ async function load_profile_page() {
     } catch (e) {}
   }*/
 }
+
+
+function delete_event_listener(){
+  homeButton.removeEventListener("click",func1);
+  logoButton.removeEventListener("click",func2);
+  browseButton.removeEventListener("click",func3);
+  accountButton.removeEventListener("click",func4);
+  const postBtn = document.querySelector("#postBtn");
+  console.log(postBtn);
+  postBtn.removeEventListener("click",func5);
+  // const reloadWallBtn = document.querySelector("#reloadWallBtn");
+  // reloadWallBtn.removeEventListener("click", reloadWall);
+  browseBtn.removeEventListener("click", func6);
+  
+} 

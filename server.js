@@ -57,15 +57,20 @@ io.on("connection", (socket) => {
     //socket.emit('setClient', { client: socket.id });
     //io.emit('prova1',"prova1");
     socket.on('login', (data) => {
+        
+        try {
+            let decode = jwt.verify(data.token , process.env.SECRET_KEY);
+            email = decode.email;
+            console.log("login received by ", email);
 
-        let decode = jwt.verify(data.token , process.env.SECRET_KEY);
-        email = decode.email;
-        console.log("login received by ", email);
+            // if not find logged save once new else call remove other
+            io.to(email).emit('restoreHomepage');
+            io.in(email).socketsLeave(email);
+            socket.join(email);
+        } catch (error) {
+            console.log(error);
+        }
        
-        // if not find logged save once new else call remove other
-        io.to(email).emit('restoreHomepage');
-        io.in(email).socketsLeave(email);
-        socket.join(email);
     });
 
     socket.on('userBrowsed', (data) => {
@@ -97,12 +102,13 @@ async function changeStatus(email, status){
 async function updateChart(email) {
     console.log(email);
     let wallPosts = (await Post.find({ receiver: email })).length;
-    let pageViews = (await User.findOne({ email: email })).visual;
+    let pageViews = (await User.findOne({ email: email })).visual;    
     let onlineUsers = (await User.find({ status: "online" })).length;
     console.log("wallPosts: ", wallPosts);
-    console.log("onlineUsers: ", onlineUsers);
     console.log("pageViews: ", pageViews);
-    io.to(email).emit('chart', { wallPosts: wallPosts, pageViews: pageViews, onlineUsers: onlineUsers });
+    console.log("onlineUsers: ", onlineUsers);
+    io.to(email).emit('chart', { wallPosts: wallPosts, pageViews: pageViews });
+    io.emit('onlineUsers', { onlineUsers: onlineUsers });
 }
 
 //Welcome page
