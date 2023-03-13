@@ -14,7 +14,12 @@ const postSchema=new mongoose.Schema({
     poster:{
         type:String,
         required:true
-    }
+    },
+    location:{
+        type:String,
+        required:false,
+        default :undefined
+    },
 });
 
 const Post=mongoose.model("Post",postSchema);

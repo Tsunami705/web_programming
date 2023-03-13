@@ -40,7 +40,12 @@ const userSchema=new mongoose.Schema({
         type:Number,
         required:false,
         default : 0
-    }
+    },
+    location:{
+        type:String,
+        required:false,
+        default : "none"
+    },
 });
 
 const User=mongoose.model("User",userSchema);
