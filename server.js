@@ -321,7 +321,7 @@ app.post("/post", async (req, res) => {
         var ip = req.ip;
 
         // FOR DEBUGGING
-        ip = '8.8.8.8';
+        // ip = '8.8.8.8';
         let pos = await getLocation(ip);
         post_message(text, receiver, poster, pos);
         res.status(200).send({ success: true, message: "Post successfully." });
