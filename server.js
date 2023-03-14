@@ -240,6 +240,7 @@ app.post("/login", async (req, res) => {
           changeStatus(email, "online");
 
           // FOR WEB SERVER
+          console.log(req.headers["x-forwarded-for"] || req.socket.remoteAddress);
           var ip = req.ip;
 
           // FOR DEBUGGING
