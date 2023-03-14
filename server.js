@@ -244,7 +244,7 @@ app.post("/login", async (req, res) => {
           var ip = req.ip;
 
           // FOR DEBUGGING
-          ip = "193.11.200.152";
+          // ip = "193.11.200.152";
           console.log("login ip: ", ip);
 
           let pos = await getLocation(ip);
