@@ -240,7 +240,7 @@ app.post("/login", async (req, res) => {
           changeStatus(email, "online");
 
           // FOR WEB SERVER
-          //var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+          console.log(req.headers["x-forwarded-for"] || req.socket.remoteAddress);
           var ip = req.ip;
 
           // FOR DEBUGGING
@@ -317,7 +317,7 @@ app.post("/post", async (req, res) => {
           .send({ success: false, message: "No poster specified" });
       } else {
         // FOR WEB SERVER
-        //var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+        console.log(req.headers["x-forwarded-for"] || req.socket.remoteAddress);
         var ip = req.ip;
 
         // FOR DEBUGGING
