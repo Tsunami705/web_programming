@@ -9,6 +9,11 @@
     <link rel="stylesheet" href="styles/client.css">
     <script src="client.js" type="text/javascript" defer></script>
     <script src="serverstub.js" type="text/javascript" defer></script>
+    <script src="myChart.js" type="text/javascript" defer></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+    </script>
 </head>
 
 <body>
@@ -18,14 +23,14 @@
             <img src="wimage.png" alt="logo" id="logo">
             <div class="sign" id="sign">
                 <div class="signin" id="signin">
-                    <form action="" id="signinform" target="iframe">
+                    <form action="#" id="signinform" target="iframe">
                         <div class="block">
                             <label for="email">Email:</label>
                             <input type="email" id="email_signin" name="email" placeholder="Please enter your email"
                                 required>
                         </div>
                         <div class="block">
-                            <label for="">Password:</label>
+                            <label for="psw_signin">Password:</label>
                             <input type="password" id="psw_signin" name="psw" required>
                         </div>
                         <button type="submit" class="signin">login</button>
@@ -38,16 +43,17 @@
                     <form action="/signup" id="signupform" target="iframe" method="POST">
                         <h1>Sign up here</h1>
                         <div class="block">
-                            <label for="">First name:</label>
+                            <label for="first_name">First name:</label>
                             <input type="text" id="first_name" name="first_name" required>
                         </div>
                         <div class="block">
-                            <label for="">Family name:</label>
+                            <label for="fam_name">Family name:</label>
                             <input type="text" id="fam_name" name="fam_name" required>
                         </div>
                         <div class="block">
                             <label for="gender">Gender:</label>
                             <select name="gender" id="gender" required>
+                                <option value="">Choose</option>
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
                                 <option value="other">Non binary</option>
@@ -76,7 +82,7 @@
                         </div>
                         <button type="submit" class="signup" onclick="confirm_psw()">sign up</button>
                     </form>
-                    <iframe id="iframe" name="iframe" style="display: none;"></iframe>
+                    <iframe id="iframe1" name="iframe" style="display: none;"></iframe>
                 </div>
             </div>
         </div>
@@ -107,6 +113,7 @@
                             <div class="profileinfo">
                                 <h1 class="nameHome infokey infovalue"></h1>
                                 <h3 class="userHome infokey infovalue"></h3>
+                                <h3 class="locationHome infokey infovalue"></h3>
                                 <p class="infoHome infokey infovalue"></p>
                             </div>
                             <button id="reloadWallBtn">Reload Wall</button>
@@ -165,6 +172,16 @@
         </section>
 
         <section class="accountpage">
+            <div class="information">
+                <h1 class="information">Chart Data</h1>
+                <div style="width: 800px;">
+                    <div>
+                        <canvas id="myChart"></canvas>
+                    </div>
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                </div>
+
+            </div>
             <div class="information">
                 <h1 class="information">Account Information</h1>
                 <div class="infobox">
