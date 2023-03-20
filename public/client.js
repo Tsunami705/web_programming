@@ -1,7 +1,18 @@
-
 //var socket = io();
 // ON LOGIN ACTION
 
+
+// Step 1: Login
+async function getLocation() {
+  const location = await new Promise((resolve, reject) => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(resolve, reject);
+    } else {
+      reject("Geolocation is not supported by this browser.");
+    }
+  });
+  return location;
+}
 //
 
 //  Diconnect user logged in
@@ -104,7 +115,6 @@ async function confirm_psw() {
   }
 }
 
-
 let j = true;
 // Step 5:Signin Mechanism
 try {
@@ -117,8 +127,11 @@ try {
       password: signin[1].value,
     };
 
+    /////////////////////
+    //alert("latitudine: " + (await getLocation()).coords.latitude + " longitudine: " + (await getLocation()).coords.longitude);
+    
     let signinData = await serverstub
-      .signIn(loginData.username, loginData.password)
+      .signIn(loginData.username, loginData.password,  (await getLocation()).coords.latitude,  (await getLocation()).coords.longitude)
       .then((res) => {
         localStorage.setItem("loggedinusers", res.data);
         localStorage.setItem("email", loginData.username);
@@ -142,7 +155,7 @@ try {
 
       //// EMIT TO SERVER
       //alert("login success");
-     
+
       socket.emit("login", {
         token: localStorage.getItem("loggedinusers"),
       });
@@ -159,7 +172,7 @@ try {
       window.location.reload();
       load_profile_page();
 
-      alert(getCurrentPosition())
+      //alert(getCurrentPosition());
     } else {
       if (!check_if_signin_message_exist) {
         null;
@@ -342,9 +355,6 @@ function hashfunc(String) {
   return result;
 }
 
-
-
-
 async function load_profile_page() {
   // Step 7:display your account information
 
@@ -362,33 +372,45 @@ async function load_profile_page() {
     homePage.style.display = "none";
   }
 
-  homeButton.addEventListener("click", func1=() => {
-    browsePage.style.display = "none";
-    accountPage.style.display = "none";
-    homePage.style.display = "block";
-    sessionStorage.setItem("tabLiNum", "home");
-  });
+  homeButton.addEventListener(
+    "click",
+    (func1 = () => {
+      browsePage.style.display = "none";
+      accountPage.style.display = "none";
+      homePage.style.display = "block";
+      sessionStorage.setItem("tabLiNum", "home");
+    })
+  );
 
-  logoButton.addEventListener("click", func2=() => {
-    browsePage.style.display = "none";
-    accountPage.style.display = "none";
-    homePage.style.display = "block";
-    sessionStorage.setItem("tabLiNum", "home");
-  });
+  logoButton.addEventListener(
+    "click",
+    (func2 = () => {
+      browsePage.style.display = "none";
+      accountPage.style.display = "none";
+      homePage.style.display = "block";
+      sessionStorage.setItem("tabLiNum", "home");
+    })
+  );
 
-  browseButton.addEventListener("click", func3=() => {
-    browsePage.style.display = "block";
-    accountPage.style.display = "none";
-    homePage.style.display = "none";
-    sessionStorage.setItem("tabLiNum", "browse");
-  });
+  browseButton.addEventListener(
+    "click",
+    (func3 = () => {
+      browsePage.style.display = "block";
+      accountPage.style.display = "none";
+      homePage.style.display = "none";
+      sessionStorage.setItem("tabLiNum", "browse");
+    })
+  );
 
-  accountButton.addEventListener("click", func4=() => {
-    browsePage.style.display = "none";
-    accountPage.style.display = "block";
-    homePage.style.display = "none";
-    sessionStorage.setItem("tabLiNum", "account");
-  });
+  accountButton.addEventListener(
+    "click",
+    (func4 = () => {
+      browsePage.style.display = "none";
+      accountPage.style.display = "block";
+      homePage.style.display = "none";
+      sessionStorage.setItem("tabLiNum", "account");
+    })
+  );
 
   let Token = localStorage.getItem("loggedinusers");
   let userEmail = localStorage.getItem("email");
@@ -402,9 +424,7 @@ async function load_profile_page() {
       console.log(error);
     });
 
-  
   //ACCOUNT
- 
 
   //email
   let usernameinfo = document.querySelectorAll(
@@ -452,35 +472,38 @@ async function load_profile_page() {
   const reloadWallBtn = document.querySelector("#reloadWallBtn");
   reloadWall();
 
-  postBtn.addEventListener("click", func5=async()=> {
-    let Token = localStorage.getItem("loggedinusers");
-    let userEmail = localStorage.getItem("email");
-    const message = messageText.value;
-    const recipientEmail = email.value;
+  postBtn.addEventListener(
+    "click",
+    (func5 = async () => {
+      let Token = localStorage.getItem("loggedinusers");
+      let userEmail = localStorage.getItem("email");
+      const message = messageText.value;
+      const recipientEmail = email.value;
 
-    let postData = await serverstub
-      .postMessage(Token, userEmail, message, recipientEmail)
-      .then((res) => {
-        return res;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      let postData = await serverstub
+        .postMessage(Token, userEmail, message, recipientEmail, (await getLocation()).coords.latitude,  (await getLocation()).coords.longitude )
+        .then((res) => {
+          return res;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
-    if (!message.length) {
-      document.getElementById("messageText").placeholder =
-        "Write something here!";
-    } else if (!postData.success) {
-      document.getElementById("postemail").value = "";
-      document.getElementById("postemail").placeholder = "Incorrect Email";
-    } else {
-      document.getElementById("messageText").placeholder = "Message...";
-      document.getElementById("postemail").placeholder = "User Email";
-      messageText.value = "";
-      email.value = "";
-      reloadWall();
-    }
-  });
+      if (!message.length) {
+        document.getElementById("messageText").placeholder =
+          "Write something here!";
+      } else if (!postData.success) {
+        document.getElementById("postemail").value = "";
+        document.getElementById("postemail").placeholder = "Incorrect Email";
+      } else {
+        document.getElementById("messageText").placeholder = "Message...";
+        document.getElementById("postemail").placeholder = "User Email";
+        messageText.value = "";
+        email.value = "";
+        reloadWall();
+      }
+    })
+  );
 
   reloadWallBtn.addEventListener("click", reloadWall);
 
@@ -514,12 +537,12 @@ async function load_profile_page() {
       textDiv.classList.add("textMessage");
 
       const writerP = document.createElement("h3");
-      if (message.location ===  undefined) {
-        writerP.textContent = (message.poster + " from " + "Unknown");
-      } 
+      if (message.location === undefined) {
+        writerP.textContent = message.poster + " from " + "Unknown";
+      }
 
-        writerP.textContent = (message.poster + " from " + message.location);
-        textDiv.appendChild(writerP);
+      writerP.textContent = message.poster + " from " + message.location;
+      textDiv.appendChild(writerP);
 
       const messageP = document.createElement("p");
       messageP.textContent = message.text;
@@ -533,128 +556,9 @@ async function load_profile_page() {
   try {
     let userSearched = null;
 
-    browseBtn.addEventListener("click", func6=async() =>{
-      let input = document.querySelector("#browseInput");
-      let Token = localStorage.getItem("loggedinusers");
-      let userEmail = localStorage.getItem("email");
-      let userData = await serverstub
-        .getUserDataByEmail(Token, userEmail, input.value)
-        .then((res) => {
-          return res;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
-      if (userData.success == false) {
-        document.getElementById("browseInput").placeholder = "User not exist!";
-        document.getElementById("browseInput").value = "";
-        return;
-      } else {
-        document.getElementById("browseInput").placeholder =
-          "Who are you looking for?";
-        // Show the div with user informmation
-        browseTab.style.display = "block";
-
-        // Send socket event to server to notify that a user hasb been browsed
-        console.log("user browsed: " + input.value);
-        
-        socket.emit("userBrowsed", input.value);
-
-        //profile info
-        /* let userdata = await serverstub
-          .getUserDataByEmail(Token, userEmail, input.value)
-          .then((res) => {
-            return res.data;
-          })
-          .catch((err) => {
-            console.log(err);
-          }); */
-        let userdata = userData.data;
-
-        console.log(userdata);
-
-        let nameBrowse = document.querySelectorAll("h1.nameBrowse")[0];
-        nameBrowse.innerHTML = userdata.first_name + " " + userdata.family_name;
-
-        let userBrowse = document.querySelectorAll("h3.userBrowse")[0];
-        userBrowse.innerHTML = userdata.email;
-        userSearched = userdata.email;
-
-        let infoBrowse = document.querySelectorAll("p.infoBrowse")[0];
-        infoBrowse.innerHTML =
-          "Hello, I'm from " + userdata.city + " in " + userdata.country;
-
-        let browseImage = document.getElementById("browseImage");
-        browseImage.src =
-          "https://randomuser.me/api/portraits/lego/" +
-          hashfunc(userSearched) +
-          ".jpg";
-
-        //load user wall
-        BreloadWall();
-      }
-    });
-
-    BreloadWallBtn.addEventListener("click", BreloadWall);
-
-    async function BreloadWall() {
-      console.log(userSearched);
-      let Token = localStorage.getItem("loggedinusers");
-      let userEmail = localStorage.getItem("email");
-      let messages = await serverstub
-        .getUserMessagesByEmail(Token, userEmail, userSearched)
-        .then((res) => {
-          return res;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
-      BmessageWall.innerHTML = "";
-
-      if(messages.post == undefined){
-        return;
-      }
-
-      messages.post.forEach(function (message) {
-        const messageDiv = document.createElement("div");
-        messageDiv.classList.add("message");
-
-        const avatarImg = document.createElement("img");
-        avatarImg.src =
-          "https://randomuser.me/api/portraits/lego/" +
-          hashfunc(message.poster) +
-          ".jpg";
-        avatarImg.alt = "User Avatar";
-        messageDiv.appendChild(avatarImg);
-
-        const textDiv = document.createElement("div");
-        textDiv.classList.add("textMessage");
-
-        const writerP = document.createElement("h3");
-        writerP.textContent = (message.poster + message.location);
-        textDiv.appendChild(writerP);
-
-        const messageP = document.createElement("p");
-        messageP.textContent = message.text;
-        textDiv.appendChild(messageP);
-
-        messageDiv.appendChild(textDiv);
-
-        BmessageWall.appendChild(messageDiv);
-      });
-    }
-  } catch (e) {}
-
-  /*
-  if (!Token) {
-  } else {
-    try {
-      /*
-      let userSearched = null;
-
-      browseBtn.addEventListener("click", async function () {
+    browseBtn.addEventListener(
+      "click",
+      (func6 = async () => {
         let input = document.querySelector("#browseInput");
         let Token = localStorage.getItem("loggedinusers");
         let userEmail = localStorage.getItem("email");
@@ -678,16 +582,23 @@ async function load_profile_page() {
           // Show the div with user informmation
           browseTab.style.display = "block";
 
+          // Send socket event to server to notify that a user hasb been browsed
+          console.log("user browsed: " + input.value);
+
+          socket.emit("userBrowsed", input.value);
+
           //profile info
           /* let userdata = await serverstub
-            .getUserDataByEmail(Token, userEmail, input.value)
-            .then((res) => {
-              return res.data;
-            })
-            .catch((err) => {
-              console.log(err);
-            }); 
-            let userdata = userData.data;
+          .getUserDataByEmail(Token, userEmail, input.value)
+          .then((res) => {
+            return res.data;
+          })
+          .catch((err) => {
+            console.log(err);
+          }); */
+          let userdata = userData.data;
+
+          console.log(userdata);
 
           let nameBrowse = document.querySelectorAll("h1.nameBrowse")[0];
           nameBrowse.innerHTML =
@@ -710,12 +621,119 @@ async function load_profile_page() {
           //load user wall
           BreloadWall();
         }
+      })
+    );
+
+    BreloadWallBtn.addEventListener("click", BreloadWall);
+
+    async function BreloadWall() {
+      console.log(userSearched);
+      let Token = localStorage.getItem("loggedinusers");
+      let userEmail = localStorage.getItem("email");
+      let messages = await serverstub
+        .getUserMessagesByEmail(Token, userEmail, userSearched)
+        .then((res) => {
+          return res;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+      BmessageWall.innerHTML = "";
+
+      if (messages.post == undefined) {
+        return;
+      }
+
+      messages.post.forEach(function (message) {
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message");
+
+        const avatarImg = document.createElement("img");
+        avatarImg.src =
+          "https://randomuser.me/api/portraits/lego/" +
+          hashfunc(message.poster) +
+          ".jpg";
+        avatarImg.alt = "User Avatar";
+        messageDiv.appendChild(avatarImg);
+
+        const textDiv = document.createElement("div");
+        textDiv.classList.add("textMessage");
+
+        const writerP = document.createElement("h3");
+        writerP.textContent = message.poster + message.location;
+        textDiv.appendChild(writerP);
+
+        const messageP = document.createElement("p");
+        messageP.textContent = message.text;
+        textDiv.appendChild(messageP);
+
+        messageDiv.appendChild(textDiv);
+
+        BmessageWall.appendChild(messageDiv);
+      });
+    }
+  } catch (e) {} /*
+  /*
+  if (!Token) {
+  } else {
+    try {
+      /*
+      let userSearched = null;
+      browseBtn.addEventListener("click", async function () {
+        let input = document.querySelector("#browseInput");
+        let Token = localStorage.getItem("loggedinusers");
+        let userEmail = localStorage.getItem("email");
+        let userData = await serverstub
+          .getUserDataByEmail(Token, userEmail, input.value)
+          .then((res) => {
+            return res;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        if (userData.success == false) {
+          document.getElementById("browseInput").placeholder =
+            "User not exist!";
+          document.getElementById("browseInput").value = "";
+          return;
+        } else {
+          document.getElementById("browseInput").placeholder =
+            "Who are you looking for?";
+          // Show the div with user informmation
+          browseTab.style.display = "block";
+          //profile info
+          /* let userdata = await serverstub
+            .getUserDataByEmail(Token, userEmail, input.value)
+            .then((res) => {
+              return res.data;
+            })
+            .catch((err) => {
+              console.log(err);
+            }); 
+            let userdata = userData.data;
+          let nameBrowse = document.querySelectorAll("h1.nameBrowse")[0];
+          nameBrowse.innerHTML =
+            userdata.first_name + " " + userdata.family_name;
+          let userBrowse = document.querySelectorAll("h3.userBrowse")[0];
+          userBrowse.innerHTML = userdata.email;
+          userSearched = userdata.email;
+          let infoBrowse = document.querySelectorAll("p.infoBrowse")[0];
+          infoBrowse.innerHTML =
+            "Hello, I'm from " + userdata.city + " in " + userdata.country;
+          let browseImage = document.getElementById("browseImage");
+          browseImage.src =
+            "https://randomuser.me/api/portraits/lego/" +
+            hashfunc(userSearched) +
+            ".jpg";
+          //load user wall
+          BreloadWall();
+        }
       }
       );
       */
-      /*
+  /*
       BreloadWallBtn.addEventListener("click", BreloadWall);
-
       async function BreloadWall() {
         console.log(userSearched);
         let Token = localStorage.getItem("loggedinusers");
@@ -728,13 +746,10 @@ async function load_profile_page() {
           .catch((err) => {
             console.log(err);
           });
-
         BmessageWall.innerHTML = "";
-
         messages.post.reverse().forEach(function (message) {
           const messageDiv = document.createElement("div");
           messageDiv.classList.add("message");
-
           const avatarImg = document.createElement("img");
           avatarImg.src =
             "https://randomuser.me/api/portraits/lego/" +
@@ -742,39 +757,31 @@ async function load_profile_page() {
             ".jpg";
           avatarImg.alt = "User Avatar";
           messageDiv.appendChild(avatarImg);
-
           const textDiv = document.createElement("div");
           textDiv.classList.add("textMessage");
-
           const writerP = document.createElement("h3");
           writerP.textContent = message.poster;
           textDiv.appendChild(writerP);
-
           const messageP = document.createElement("p");
           messageP.textContent = message.text;
           textDiv.appendChild(messageP);
-
           messageDiv.appendChild(textDiv);
-
           BmessageWall.appendChild(messageDiv);
         });
-      } */ /*
-
+      } *//*
     } catch (e) {}
   }*/
 }
 
-
-function delete_event_listener(){
-  homeButton.removeEventListener("click",func1);
-  logoButton.removeEventListener("click",func2);
-  browseButton.removeEventListener("click",func3);
-  accountButton.removeEventListener("click",func4);
+function delete_event_listener() {
+  homeButton.removeEventListener("click", func1);
+  logoButton.removeEventListener("click", func2);
+  browseButton.removeEventListener("click", func3);
+  accountButton.removeEventListener("click", func4);
   const postBtn = document.querySelector("#postBtn");
   console.log(postBtn);
-  postBtn.removeEventListener("click",func5);
+  postBtn.removeEventListener("click", func5);
   // const reloadWallBtn = document.querySelector("#reloadWallBtn");
   // reloadWallBtn.removeEventListener("click", reloadWall);
   browseBtn.removeEventListener("click", func6);
-  
-} 
+}

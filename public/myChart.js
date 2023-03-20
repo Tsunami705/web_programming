@@ -12,7 +12,6 @@ socket.on("chart", (data) => {
   // update chart data
   wallPosts = data.wallPosts;
   pageViews = data.pageViews;
-  console.log("sono chart",data.wallPosts);
   //onlineUsers = data.onlineUsers;
   updateChart();
 });
@@ -20,7 +19,6 @@ socket.on("chart", (data) => {
 
 socket.on("onlineUsers", (data) => {
   onlineUsers = data.onlineUsers;
-  console.log("bello te", data.onlineUsers);
   updateChart();
 }); 
 
@@ -56,4 +54,3 @@ myBarChart = new Chart(ctx, {
     borderWidth: 10,
   },
 });
-

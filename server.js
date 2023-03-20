@@ -201,20 +201,20 @@ app.post("/login", async (req, res) => {
     //console.log(Object.keys(req.body).length);
     let keys = Object.keys(req.body);
     console.log(req.body);
-    if (keys.length != 2) {
+    if (keys.length != 4) {
       res.status(404).send({ success: false, message: "Unexpected arguments" });
       return;
     }
 
     keys.forEach((key) => {
-      if (key != "email" && key != "psw") {
+      if (key != "email" && key != "psw" && key != "lat" && key != "lon") {
         console.log(key);
         res.status(404).send({ success: false, message: "Wrong arguments" });
         return;
       }
     });
 
-    let { email, psw } = req.body;
+    let { email, psw, lat, lon } = req.body;
     let foundUser = await User.findOne({ email: email });
     if (!foundUser) {
       res
@@ -241,13 +241,12 @@ app.post("/login", async (req, res) => {
 
           // FOR WEB SERVER
           //var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-          var ip = req.ip;
-
+          console.log("POSITION:", lat, lon);
           // FOR DEBUGGING
-          ip = "193.11.200.152";
-          console.log("login ip: ", ip);
+          //ip = "193.11.200.152";
+          //console.log("login ip: ", ip);
 
-          let pos = await getLocation(ip);
+          let pos = await getLocation(lat, lon);
           User.findOneAndUpdate(
             { email: email },
             { $set: { location: pos } }
@@ -277,7 +276,7 @@ app.post("/login", async (req, res) => {
 app.post("/post", async (req, res) => {
   let keys = Object.keys(req.body);
 
-  if (keys.length != 3) {
+  if (keys.length != 5) {
     res
       .status(404)
       .send({ success: false, message: "Wrong number of arguments" });
@@ -285,7 +284,7 @@ app.post("/post", async (req, res) => {
   }
 
   keys.forEach((key) => {
-    if (key != "text" && key != "receiver" && key != "poster") {
+    if (key != "text" && key != "receiver" && key != "poster" && key != "lat" && key != "lon") {
       res.status(404).send({ success: false, message: "Wrong arguments" });
       return;
     }
@@ -302,7 +301,7 @@ app.post("/post", async (req, res) => {
         });
         return;
       }
-      let { text, receiver, poster } = req.body;
+      let { text, receiver, poster, lat, lon } = req.body;
       if (text.length == 0) {
         console.log(text);
         console.log(text.length);
@@ -318,11 +317,11 @@ app.post("/post", async (req, res) => {
       } else {
         // FOR WEB SERVER
         //var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-        var ip = req.ip;
-
+        //var ip = req.ip;
+        console.log("POSITION:", lat, lon)
         // FOR DEBUGGING
-        ip = '8.8.8.8';
-        let pos = await getLocation(ip);
+        //ip = '8.8.8.8';
+        let pos = await getLocation(lat, lon);
         post_message(text, receiver, poster, pos);
         res.status(200).send({ success: true, message: "Post successfully." });
       }
@@ -753,12 +752,11 @@ app.get("/*", (req, res) => {
 
 const axios = require("axios");
 
-async function getLocationData(ipAddress) {
-  let string = "https://geocode.xyz/" + ipAddress.toString() + "/?geoit=JSON";
-
+async function getLocationData(string) {
   return axios
     .post(string)
     .then((response) => {
+      //console.log("RESPONSE", response.data);
       return response.data;
     })
     .catch((error) => {
@@ -766,14 +764,15 @@ async function getLocationData(ipAddress) {
     });
 }
 
-async function getLocation(ipAddress) {
-  let pos = getLocationData(ipAddress)
+async function getLocation(lat, lon) {
+
+  let string = "https://geocode.xyz/" + lat + "," + lon + "?geoit=XML&auth=" + '41131981974687277476x60871';
+  console.log("STRING", string);
+  let pos = await getLocationData(string)
     .then((data) => {
-      //console.log("POSIZIONEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE",data);
       var res = data.toString();
       let inPosition = res.search("geocode and batch geocode") + 25;
       let endPosition = res.search("Put your data on a map") - 2;
-      //console.log("OPPALA", inPosition, endPosition);
       let result = res.substring(inPosition, endPosition);
       console.log("RESULT", result);
       return result;
@@ -782,6 +781,6 @@ async function getLocation(ipAddress) {
       console.log(error);
     });
 
-  console.log("POS", ipAddress, pos);
+  //console.log("POS", ipAddress, pos);
   return pos;
 }
