@@ -20,7 +20,7 @@ var serverstub = (function() {
         headers:{
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({email:email,psw:password, lat:lat, lon:lon}),
+        body: JSON.stringify({email:email,psw:password}),
       }).then(res=>{
         return res.json();
       }).then(res=>{
