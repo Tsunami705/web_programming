@@ -201,20 +201,20 @@ app.post("/login", async (req, res) => {
     //console.log(Object.keys(req.body).length);
     let keys = Object.keys(req.body);
     console.log(req.body);
-    if (keys.length != 4) {
+    if (keys.length != 2) {
       res.status(404).send({ success: false, message: "Unexpected arguments" });
       return;
     }
 
     keys.forEach((key) => {
-      if (key != "email" && key != "psw" && key != "lat" && key != "lon") {
+      if (key != "email" && key != "psw") {
         console.log(key);
         res.status(404).send({ success: false, message: "Wrong arguments" });
         return;
       }
     });
 
-    let { email, psw, lat, lon } = req.body;
+    let { email, psw} = req.body;
     let foundUser = await User.findOne({ email: email });
     if (!foundUser) {
       res
@@ -241,16 +241,16 @@ app.post("/login", async (req, res) => {
 
           // FOR WEB SERVER
           //var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-          console.log("POSITION:", lat, lon);
+          //console.log("POSITION:", position);
           // FOR DEBUGGING
           //ip = "193.11.200.152";
           //console.log("login ip: ", ip);
 
-          let pos = await getLocation(lat, lon);
-          User.findOneAndUpdate(
-            { email: email },
-            { $set: { location: pos } }
-          ).exec();
+          ///////////////////////let pos = await getLocation(lat, lon);
+          //User.findOneAndUpdate(
+            //{ email: email },
+            //{ $set: { location: position } }
+          //).exec();
           // after response,the front-end should add the token to the localStorage
           res.status(201).send({
             success: true,
@@ -276,7 +276,7 @@ app.post("/login", async (req, res) => {
 app.post("/post", async (req, res) => {
   let keys = Object.keys(req.body);
 
-  if (keys.length != 5) {
+  if (keys.length != 4) {
     res
       .status(404)
       .send({ success: false, message: "Wrong number of arguments" });
@@ -284,7 +284,7 @@ app.post("/post", async (req, res) => {
   }
 
   keys.forEach((key) => {
-    if (key != "text" && key != "receiver" && key != "poster" && key != "lat" && key != "lon") {
+    if (key != "text" && key != "receiver" && key != "poster" && key != "position") {
       res.status(404).send({ success: false, message: "Wrong arguments" });
       return;
     }
@@ -301,7 +301,7 @@ app.post("/post", async (req, res) => {
         });
         return;
       }
-      let { text, receiver, poster, lat, lon } = req.body;
+      let { text, receiver, poster, position } = req.body;
       if (text.length == 0) {
         console.log(text);
         console.log(text.length);
@@ -318,11 +318,11 @@ app.post("/post", async (req, res) => {
         // FOR WEB SERVER
         //var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
         //var ip = req.ip;
-        console.log("POSITION:", lat, lon)
+        console.log("POSITION:", position);
         // FOR DEBUGGING
         //ip = '8.8.8.8';
-        let pos = await getLocation(lat, lon);
-        post_message(text, receiver, poster, pos);
+        //////////////////let pos = await getLocation(lat, lon);
+        post_message(text, receiver, poster, position);
         res.status(200).send({ success: true, message: "Post successfully." });
       }
     } catch (e) {
@@ -749,38 +749,3 @@ async function validate_token(token, email) {
 app.get("/*", (req, res) => {
   res.status(300).redirect("/");
 });
-
-const axios = require("axios");
-
-async function getLocationData(string) {
-  return axios
-    .post(string)
-    .then((response) => {
-      //console.log("RESPONSE", response.data);
-      return response.data;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-}
-
-async function getLocation(lat, lon) {
-
-  let string = "https://geocode.xyz/" + lat + "," + lon + "?geoit=XML&auth=" + '41131981974687277476x60871';
-  console.log("STRING", string);
-  let pos = await getLocationData(string)
-    .then((data) => {
-      var res = data.toString();
-      let inPosition = res.search("geocode and batch geocode") + 25;
-      let endPosition = res.search("Put your data on a map") - 2;
-      let result = res.substring(inPosition, endPosition);
-      console.log("RESULT", result);
-      return result;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-
-  //console.log("POS", ipAddress, pos);
-  return pos;
-}

@@ -3,16 +3,6 @@
 
 
 // Step 1: Login
-async function getLocation() {
-  const location = await new Promise((resolve, reject) => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(resolve, reject);
-    } else {
-      reject("Geolocation is not supported by this browser.");
-    }
-  });
-  return location;
-}
 //
 
 //  Diconnect user logged in
@@ -23,6 +13,7 @@ socket.on("restoreHomepage", function () {
   // remove from local storage
   localStorage.removeItem("loggedinusers");
   localStorage.removeItem("email");
+  localStorage.removeItem("position");
 
   // restore homepage
   sessionStorage.setItem("tabLiNum", "home");
@@ -127,11 +118,9 @@ try {
       password: signin[1].value,
     };
 
-    /////////////////////
-    //alert("latitudine: " + (await getLocation()).coords.latitude + " longitudine: " + (await getLocation()).coords.longitude);
     
     let signinData = await serverstub
-      .signIn(loginData.username, loginData.password,  (await getLocation()).coords.latitude,  (await getLocation()).coords.longitude)
+      .signIn(loginData.username, loginData.password)
       .then((res) => {
         localStorage.setItem("loggedinusers", res.data);
         localStorage.setItem("email", loginData.username);
@@ -447,7 +436,7 @@ async function load_profile_page() {
   //HOMEPAGE
   //Location
   let locationHome = document.querySelectorAll("h3.locationHome")[0];
-  locationHome.innerHTML = userdata.location;
+  locationHome.innerHTML = localStorage.getItem("position");
 
   let nameHome = document.querySelectorAll("h1.nameHome")[0];
   nameHome.innerHTML = userdata.first_name + " " + userdata.family_name;
@@ -477,11 +466,12 @@ async function load_profile_page() {
     (func5 = async () => {
       let Token = localStorage.getItem("loggedinusers");
       let userEmail = localStorage.getItem("email");
+      let position = localStorage.getItem("position");
       const message = messageText.value;
       const recipientEmail = email.value;
 
       let postData = await serverstub
-        .postMessage(Token, userEmail, message, recipientEmail, (await getLocation()).coords.latitude,  (await getLocation()).coords.longitude )
+        .postMessage(Token, userEmail, message, recipientEmail, position)
         .then((res) => {
           return res;
         })
