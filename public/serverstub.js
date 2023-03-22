@@ -13,13 +13,14 @@ var serverstub = (function() {
   var loggedInUsers;
 
   var serverstub = {
-    signIn: async function(email, password){
+    signIn: async function(email, password) {
+
       let logindata=await fetch('/login',{
         method:'POST',
         headers:{
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({email:email,psw:password}),
+        body: JSON.stringify({email:email,psw:password, lat:lat, lon:lon}),
       }).then(res=>{
         return res.json();
       }).then(res=>{
@@ -30,7 +31,7 @@ var serverstub = (function() {
       return logindata;
     },
 
-    postMessage: async function(token, email,content, toEmail){
+    postMessage: async function(token, email,content, toEmail, position){
       let postData=await fetch('/post',{
         method:'POST',
         headers:{
@@ -38,7 +39,7 @@ var serverstub = (function() {
           'Authorization':token,
           'email':email,
         },
-        body: JSON.stringify({receiver:toEmail,poster:email,text:content}),
+        body: JSON.stringify({receiver:toEmail,poster:email,text:content, position:position}),
       }).then(res=>{
         return res.json();
       }).then(res=>{
