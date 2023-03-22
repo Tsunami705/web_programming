@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" id="webpage">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twidder</title>
+    <link rel="stylesheet" href="styles/client.css">
+    <script src="client.js" type="text/javascript" defer></script>
+    <script src="serverstub.js" type="text/javascript" defer></script>
+    <script src="myChart.js" type="text/javascript" defer></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="location.js" type="text/javascript" defer></script>
+    <script>
+        var socket = io();
+    </script>
+</head>
+
+<body>
+    <div id="welcomepage">
+        <div class="body">
+            <!--body of the welcome page-->
+            <img src="wimage.png" alt="logo" id="logo">
+            <div class="sign" id="sign">
+                <div class="signin" id="signin">
+                    <form action="#" id="signinform" target="iframe">
+                        <div class="block">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email_signin" name="email" placeholder="Please enter your email"
+                                required>
+                        </div>
+                        <div class="block">
+                            <label for="psw_signin">Password:</label>
+                            <input type="password" id="psw_signin" name="psw" required>
+                        </div>
+                        <button type="submit" class="signin">login</button>
+                    </form>
+                    <iframe id="iframe" name="iframe" style="display: none;"></iframe>
+
+                </div>
+                <div id="signup" class="signup">
+                    <br>
+                    <form action="/signup" id="signupform" target="iframe" method="POST">
+                        <h1>Sign up here</h1>
+                        <div class="block">
+                            <label for="first_name">First name:</label>
+                            <input type="text" id="first_name" name="first_name" required>
+                        </div>
+                        <div class="block">
+                            <label for="fam_name">Family name:</label>
+                            <input type="text" id="fam_name" name="fam_name" required>
+                        </div>
+                        <div class="block">
+                            <label for="gender">Gender:</label>
+                            <select name="gender" id="gender" required>
+                                <option value="">Choose</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Non binary</option>
+                                <option value="non">Prefer not to say</option>
+                            </select>
+                        </div>
+                        <div class="block">
+                            <label for="city">City:</label>
+                            <input type="text" id="city" name="city" required>
+                        </div>
+                        <div class="block">
+                            <label for="country">Country:</label>
+                            <input type="text" id="country" name="country" required>
+                        </div>
+                        <div class="block">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="block">
+                            <label for="psw">Password:</label>
+                            <input type="password" id="psw" name="psw" minlength="8" maxlength="18" required>
+                        </div>
+                        <div class="block">
+                            <label for="repsw">Confirm PSW:</label>
+                            <input type="password" id="repsw" name="repsw" minlength="8" maxlength="18" required>
+                        </div>
+                        <button type="submit" class="signup" onclick="confirm_psw()">sign up</button>
+                    </form>
+                    <iframe id="iframe1" name="iframe" style="display: none;"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="profilepage">
+        <header class="tabcard">
+            <div class="logo"><img src="./logo.png" alt="logo" class="logo">
+                <h1><a href="#">Twidder</a></h1>
+            </div>
+
+            <nav>
+                <ul>
+                    <li class="homeButton">Home</li>
+                    <li class="browseButton" id="browseButton">Browse</li>
+                    <li class="accountButton">Account</li>
+                </ul>
+            </nav>
+        </header>
+        <section class="homepage">
+
+            <div id="homeTab">
+
+                <div id="userInfo" class="userInfo">
+                    <!-- display user's personal information here -->
+                    <div class="card">
+                        <div class="firstinfo">
+                            <img id="profileImage" src="profile.jpg" alt="" />
+                            <div class="profileinfo">
+                                <h1 class="nameHome infokey infovalue"></h1>
+                                <h3 class="userHome infokey infovalue"></h3>
+                                <h3 class="locationHome infokey infovalue"></h3>
+                                <p class="infoHome infokey infovalue"></p>
+                            </div>
+                            <button id="reloadWallBtn">Reload Wall</button>
+                        </div>
+                        <div id="postMessage">
+                            <textarea id="messageText" placeholder="Message..."></textarea>
+                            <input type="email" id="postemail" placeholder="User Email">
+                            <button id="postBtn">Post</button>
+                        </div>
+                    </div>
+
+                    <div id="messageWall">
+                        <!-- display a list of messages here -->
+                    </div>
+                </div>
+
+            </div>
+
+
+
+        </section>
+
+        <section class="browsepage">
+
+
+
+            <!-- Search bar -->
+            <div class="search-container">
+                <input id="browseInput" type="text" placeholder="Who are you looking for?">
+                <button id="browseBtn">Search</button>
+            </div>
+
+            <!-- BROWSETAB like HOMETAB -->
+            <div id="browseTab">
+
+                <div id="BuserInfo" class="userInfo">
+                    <!-- display user's personal information here -->
+                    <div class="card">
+                        <div class="firstinfo">
+                            <img id="browseImage" src="profile.jpg" alt="" />
+                            <div class="profileinfo">
+                                <h1 class="nameBrowse infokey infovalue"></h1>
+                                <h3 class="userBrowse infokey infovalue"></h3>
+                                <p class="infoBrowse infokey infovalue"></p>
+                            </div>
+                            <button id="BreloadWallBtn">Reload Wall</button>
+                        </div>
+                    </div>
+                    <div id="BmessageWall">
+                        <!-- display a list of messages here -->
+                    </div>
+                </div>
+            </div>
+
+
+        </section>
+
+        <section class="accountpage">
+            <div class="information">
+                <h1 class="information">Chart Data</h1>
+                <div style="width: 800px;">
+                    <div>
+                        <canvas id="myChart"></canvas>
+                    </div>
+                    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                </div>
+
+            </div>
+            <div class="information">
+                <h1 class="information">Account Information</h1>
+                <div class="infobox">
+                    <div class="usernameinfo infokey">Email</div>
+                    <div class="usernameinfo infovalue"></div>
+                </div>
+                <div class="infobox">
+                    <div class="nameinfo infokey">Name</div>
+                    <div class="nameinfo infovalue"></div>
+                </div>
+                <div class="infobox">
+                    <div class="genderinfo infokey">Gender</div>
+                    <div class="genderinfo infovalue"></div>
+                </div>
+                <div class="infobox">
+                    <div class="cityinfo infokey">City</div>
+                    <div class="cityinfo infovalue"></div>
+                </div>
+                <div class="infobox">
+                    <div class="countryinfo infokey">Country</div>
+                    <div class="countryinfo infovalue"></div>
+                </div>
+
+            </div>
+
+            <div class="infooperation">
+                <div class="changepsw">
+                    <h3>Change your password</h3>
+                    <h4>Change your password anytime</h4>
+                </div>
+                <div class="change">
+                    <form action="submit" class="changeform" id="changeform" target="iframe">
+                        <input type="password" class="" id="oldpsw" name="oldpsw" minlength="8" maxlength="18"
+                            placeholder="Current password" required>
+                        <a href="#" id="qqqqqq">Forget password?</a>
+                        <div class="hdd"></div>
+                        <input type="password" class="" id="newpsw" name="newpsw" minlength="8" maxlength="18"
+                            placeholder="New password" required>
+                        <input type="password" class="" id="newpswconfirm" name="newpswconfirm" minlength="8"
+                            maxlength="18" placeholder="Confirm new password" required>
+                        <div class="hdd"></div>
+                        <button type="submit" class="changebutton" onclick="confirm_change_psw()">Submit</button>
+                    </form>
+                    <iframe id="iframe" name="iframe" style="display: none;"></iframe>
+                </div>
+                <div class="logout">
+                    <h3 class="signout">Signout</h3>
+                </div>
+            </div>
+        </section>
+    </div>
+</body>
+
+</html>
